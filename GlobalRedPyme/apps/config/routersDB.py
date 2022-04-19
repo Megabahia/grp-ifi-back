@@ -8,18 +8,18 @@ class GRPPERSONASRouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_personas_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_personas_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_personas_db'
+            return 'grp_g_ifi_personas_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_personas_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_personas_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_personas_db'
+            return 'grp_g_ifi_personas_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -37,10 +37,10 @@ class GRPPERSONASRouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_personas_db' database.
+        'grp_g_ifi_personas_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_personas_db'
+            return db == 'grp_g_ifi_personas_db'
         return None
 
 class GRPCORERouter:
@@ -53,18 +53,18 @@ class GRPCORERouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_core_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_core_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_core_db'
+            return 'grp_g_ifi_core_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_core_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_core_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_core_db'
+            return 'grp_g_ifi_core_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -82,10 +82,10 @@ class GRPCORERouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_core_db' database.
+        'grp_g_ifi_core_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_core_db'
+            return db == 'grp_g_ifi_core_db'
         return None
 
 class GRPCORPRouter:
@@ -99,18 +99,18 @@ class GRPCORPRouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_corp_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_corp_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_corp_db'
+            return 'grp_g_ifi_corp_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_corp_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_corp_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_corp_db'
+            return 'grp_g_ifi_corp_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -128,10 +128,10 @@ class GRPCORPRouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_corp_db' database.
+        'grp_g_ifi_corp_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_corp_db'
+            return db == 'grp_g_ifi_corp_db'
         return None
 
 class MDMRouter:
@@ -144,18 +144,18 @@ class MDMRouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_mdm_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_mdm_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdm_db'
+            return 'grp_g_ifi_mdm_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_mdm_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_mdm_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdm_db'
+            return 'grp_g_ifi_mdm_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -173,10 +173,10 @@ class MDMRouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_mdm_db' database.
+        'grp_g_ifi_mdm_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_mdm_db'
+            return db == 'grp_g_ifi_mdm_db'
         return None
 
 class MDPRouter:
@@ -188,18 +188,18 @@ class MDPRouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_mdp_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_mdp_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdp_db'
+            return 'grp_g_ifi_mdp_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_mdp_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_mdp_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdp_db'
+            return 'grp_g_ifi_mdp_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -217,10 +217,10 @@ class MDPRouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_mdp_db' database.
+        'grp_g_ifi_mdp_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_mdp_db'
+            return db == 'grp_g_ifi_mdp_db'
         return None
 
 class MDORouter:
@@ -232,18 +232,18 @@ class MDORouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_mdo_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_mdo_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdo_db'
+            return 'grp_g_ifi_mdo_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_mdo_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_mdo_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_mdo_db'
+            return 'grp_g_ifi_mdo_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -261,10 +261,10 @@ class MDORouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_mdo_db' database.
+        'grp_g_ifi_mdo_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_mdo_db'
+            return db == 'grp_g_ifi_mdo_db'
         return None
 
 class GDORouter:
@@ -276,18 +276,18 @@ class GDORouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_gdo_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_gdo_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_gdo_db'
+            return 'grp_g_ifi_gdo_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_gdo_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_gdo_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_gdo_db'
+            return 'grp_g_ifi_gdo_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -305,10 +305,10 @@ class GDORouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_gdo_db' database.
+        'grp_g_ifi_gdo_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_gdo_db'
+            return db == 'grp_g_ifi_gdo_db'
         return None
 
 class GDERouter:
@@ -320,18 +320,18 @@ class GDERouter:
 
     def db_for_read(self, model, **hints):
         """
-        Attempts to read auth and contenttypes models go to grp_gde_db.
+        Attempts to read auth and contenttypes models go to grp_g_ifi_gde_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_gde_db'
+            return 'grp_g_ifi_gde_db'
         return None
 
     def db_for_write(self, model, **hints):
         """
-        Attempts to write auth and contenttypes models go to grp_gde_db.
+        Attempts to write auth and contenttypes models go to grp_g_ifi_gde_db.
         """
         if model._meta.app_label in self.route_app_labels:
-            return 'grp_gde_db'
+            return 'grp_g_ifi_gde_db'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -349,8 +349,8 @@ class GDERouter:
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth and contenttypes apps only appear in the
-        'grp_gde_db' database.
+        'grp_g_ifi_gde_db' database.
         """
         if app_label in self.route_app_labels:
-            return db == 'grp_gde_db'
+            return db == 'grp_g_ifi_gde_db'
         return None
