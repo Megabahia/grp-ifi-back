@@ -41,7 +41,7 @@ if PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_central',
+            'NAME': 'grp_g_ifi_central',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -61,9 +61,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_personas_db': {
+        'grp_g_ifi_personas_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_personas',
+            'NAME': 'grp_g_ifi_personas',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -83,9 +83,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_core_db': {
+        'grp_g_ifi_core_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_core',
+            'NAME': 'grp_g_ifi_core',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -105,9 +105,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_pymes_db': {
+        'grp_g_ifi_pymes_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_pymes',
+            'NAME': 'grp_g_ifi_pymes',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -127,9 +127,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_corp_db': {
+        'grp_g_ifi_corp_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_corp',
+            'NAME': 'grp_g_ifi_corp',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -149,9 +149,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_mdm_db': {
+        'grp_g_ifi_mdm_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdm',
+            'NAME': 'grp_g_ifi_mdm',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -171,9 +171,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_mdp_db': {
+        'grp_g_ifi_mdp_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdp',
+            'NAME': 'grp_g_ifi_mdp',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -193,9 +193,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_mdo_db': {
+        'grp_g_ifi_mdo_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdo',
+            'NAME': 'grp_g_ifi_mdo',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -215,9 +215,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_gdo_db': {
+        'grp_g_ifi_gdo_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_gdo',
+            'NAME': 'grp_g_ifi_gdo',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -237,9 +237,9 @@ if PRODUCTION:
                 },
             },
         },
-        'grp_gde_db': {
+        'grp_g_ifi_gde_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_gde',
+            'NAME': 'grp_g_ifi_gde',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
                 'host': '209.145.61.41',
@@ -294,52 +294,52 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_central',
+            'NAME': 'grp_g_ifi_central',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_personas_db': {
+        'grp_g_ifi_personas_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_personas',
+            'NAME': 'grp_g_ifi_personas',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_core_db': {
+        'grp_g_ifi_core_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_core',
+            'NAME': 'grp_g_ifi_core',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_pymes_db': {
+        'grp_g_ifi_pymes_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_pymes',
+            'NAME': 'grp_g_ifi_pymes',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_corp_db': {
+        'grp_g_ifi_corp_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_corp',
+            'NAME': 'grp_g_ifi_corp',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_mdm_db': {
+        'grp_g_ifi_mdm_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdm',
+            'NAME': 'grp_g_ifi_mdm',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_mdp_db': {
+        'grp_g_ifi_mdp_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdp',
+            'NAME': 'grp_g_ifi_mdp',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_mdo_db': {
+        'grp_g_ifi_mdo_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_mdo',
+            'NAME': 'grp_g_ifi_mdo',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_gdo_db': {
+        'grp_g_ifi_gdo_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_gdo',
+            'NAME': 'grp_g_ifi_gdo',
             'ENFORCE_SCHEMA': False,
         },
-        'grp_gde_db': {
+        'grp_g_ifi_gde_db': {
             'ENGINE': 'djongo',
-            'NAME': 'grp_gde',
+            'NAME': 'grp_g_ifi_gde',
             'ENFORCE_SCHEMA': False,
         },
     }
