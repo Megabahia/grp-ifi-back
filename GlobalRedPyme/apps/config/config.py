@@ -36,6 +36,8 @@ if PRODUCTION:
         "http://209.145.61.41:4207",
         "http://209.145.61.41:4208",
         "http://209.145.61.41:4209",
+        "http://209.145.61.41:4210",
+        "http://localhost:4200"
     ]
     #databases
     DATABASES = {
