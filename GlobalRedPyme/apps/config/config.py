@@ -11,7 +11,7 @@ if PRODUCTION:
     #URL FRONT END
     API_FRONT_END="http://209.145.61.41:4203"
     API_FRONT_END_CENTRAL="http://209.145.61.41:4206"
-    API_FRONT_END_CREDIT="http://209.145.61.41:4209"
+    API_FRONT_END_CREDIT="http://209.145.61.41:4210"
     #TIEMPO DE EXPIRACION DE TOKEN (EN SEGUNDOS)
     TOKEN_EXPIRED_AFTER_SECONDS = 86400
     #NOMBRE KEYWORK TOKEN
@@ -37,7 +37,8 @@ if PRODUCTION:
         "http://209.145.61.41:4208",
         "http://209.145.61.41:4209",
         "http://209.145.61.41:4210",
-        "http://localhost:4200"
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
     ]
     #databases
     DATABASES = {
