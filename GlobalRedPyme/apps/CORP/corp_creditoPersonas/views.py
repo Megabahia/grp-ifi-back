@@ -116,7 +116,7 @@ def creditoPersonas_listOne(request, pk):
 # 'methods' can be used to apply the same modification to multiple methods
 @swagger_auto_schema(methods=['post'], request_body=CreditoPersonasSerializer)
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def creditoPersonas_update(request, pk):
     request.POST._mutable = True
     timezone_now = timezone.localtime(timezone.now())
@@ -147,6 +147,7 @@ def creditoPersonas_update(request, pk):
             if serializer.is_valid():
                 serializer.save()
                 createLog(logModel,serializer.data,logTransaccion)
+                publish(serializer.data)
                 return Response(serializer.data)
             createLog(logModel,serializer.errors,logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
