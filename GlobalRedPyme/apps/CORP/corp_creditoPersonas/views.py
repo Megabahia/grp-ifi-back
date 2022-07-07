@@ -6,6 +6,10 @@ from apps.PERSONAS.personas_personas.serializers import  PersonasSearchSerialize
 from apps.CORP.corp_creditoPersonas.serializers import (
     CreditoPersonasSerializer, CreditoPersonasPersonaSerializer
 )
+# Publicar en sns
+from apps.CORP.corp_creditoPersonas.producer import publish
+# Consumir en sqs
+from apps.CORP.corp_creditoPersonas.consumer import get_queue_url
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
@@ -443,4 +447,13 @@ def creditoPersonas_listOne_persona(request, pk):
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
+#ENCONTRAR UNO
+@api_view(['GET'])
+def prueba(request):
+    publish('')
+    return Response({"message":"se acaba de crear la cola"},200)
 
+@api_view(['GET'])
+def prueba2(request):
+    get_queue_url()
+    return Response({"message":"Escuchar la cola"},200)

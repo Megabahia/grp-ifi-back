@@ -1,3 +1,15 @@
+# environ init
+import os
+import environ
+
+env = environ.Env()
+
+# Establecer el directorio base del proyecto
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Tomar variables de entorno del archivo .env
+environ.Env.read_env(os.path.join(BASE_DIR, '../GlobalRedPyme/.env.test'))
+
 PRODUCTION=True
 
 #VARIABLES GLOBALES
@@ -26,10 +38,14 @@ if PRODUCTION:
     TWILIO_AUTH_TOKEN = ''
 
     # CONFIGURACION DE AMAZON S3
-    DEFAULT_FILE_STORAGE = ''
-    AWS_ACCESS_KEY_ID = ''
-    AWS_SECRET_ACCESS_KEY = ''
-    AWS_STORAGE_BUCKET_NAME = ''
+    DEFAULT_FILE_STORAGE = env.str('DEFAULT_FILE_STORAGE')
+    AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME')
+    # CONFIGURACION DE AMAZON SNS
+    AWS_TOPIC_ARN = env.str('AWS_TOPIC_ARN')
+    AWS_REGION_NAME = env.str('AWS_REGION_NAME')
+    AWS_QUEUE_NAME = env.str('AWS_QUEUE_NAME')
     #CORS
     CORS_ALLOWED_ORIGINS = [
         "http://209.145.61.41:4206",
