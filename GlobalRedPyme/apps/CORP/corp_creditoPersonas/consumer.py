@@ -28,8 +28,10 @@ def get_queue_url():
             jsonRequest = json.loads(body['Message'])
             _idCredidPerson = json.loads(body['Message'])['_id']
             message_bodies.append(body)
-            query = CreditoPersonas.objects.filter(pk=ObjectId(_idCredidPerson), state=1).first()
-            serializer = CreditoPersonasSerializer(query, data=jsonRequest, partial=True)
+            # Por el momento crea los nuevos registros que llegan sqs
+            # query = CreditoPersonas.objects.filter(pk=ObjectId(_idCredidPerson), state=1).first()
+            # serializer = CreditoPersonasSerializer(query, data=jsonRequest, partial=True)
+            serializer = CreditoPersonasSerializer(data=jsonRequest)
 
             if serializer.is_valid():
                 serializer.save()
