@@ -245,4 +245,5 @@ AWS_QUERYSTRING_AUTH = False
 CRONJOBS = [
     # La función temporizada se ejecuta cada minuto
     ('*/1 * * * *', "apps.CORP.corp_pagos.cron.hi"),
+    ('*/1 * * * *', "apps.CORP.corp_creditoPersonas.consumer.get_queue_url"),
 ]
