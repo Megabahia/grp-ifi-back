@@ -18,30 +18,9 @@ from django.urls import path,include,re_path
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
-# SWAGGER
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 
-# Configuracion de swagger (En produccion colocar public=False)
-schema_view = get_schema_view(
-   openapi.Info(
-      title="Global Red Pyme API",
-      default_version='v1',
-      description="Enpoints de global red pyme",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="jimmy.yar@papagayo.dev"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=False,
-   permission_classes=[permissions.AllowAny],
-)
 
 urlpatterns = [
-    # Swagger
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     # CORP
     path('corp/empresas/', include(('apps.CORP.corp_empresas.urls', 'empresas'), namespace='empresas')),
     # CENTRAL

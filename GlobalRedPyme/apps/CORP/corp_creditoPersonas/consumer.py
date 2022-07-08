@@ -38,7 +38,7 @@ def get_queue_url():
                 'Id': message.message_id,
                 'ReceiptHandle': message.receipt_handle
             })
-        break
+        
         # if you don't receive any notifications the
         # messages_to_delete list will be empty
         if len(messages_to_delete) == 0:
