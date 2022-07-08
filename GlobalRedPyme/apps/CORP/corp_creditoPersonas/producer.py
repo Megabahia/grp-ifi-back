@@ -13,11 +13,15 @@ def publish(data):
         region_name=config.AWS_REGION_NAME,
     )
 
-    publishObject = {"saludo":123,"cantidad":50}
+    data.pop('reporteBuro')
+    data.pop('identificacion')
+    data.pop('ruc')
+    data.pop('rolesPago')
+    data.pop('panillaIESS')
+    data.pop('documentoAprobacion')
 
     response = snsClient.publish(
         TopicArn=topicArn,
-        # Message=json.dumps(publishObject),
         Message=json.dumps(data),
         Subject='PURCHASE',
         MessageAttributes={"TransactionType":{"DataType":"String","StringValue":"PURCHASE"}}

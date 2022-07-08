@@ -43,6 +43,7 @@ class CreditoPersonas(models.Model):
     checkTablaAmortizacion = models.BooleanField(blank=True, null=True)
     checkManualPago = models.BooleanField(blank=True, null=True)
     checkCedula = models.BooleanField(blank=True, null=True)
+    external_id = models.CharField(max_length=255,blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

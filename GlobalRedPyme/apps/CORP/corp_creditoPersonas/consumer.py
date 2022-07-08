@@ -28,16 +28,20 @@ def get_queue_url():
             jsonRequest = json.loads(body['Message'])
             _idCredidPerson = json.loads(body['Message'])['_id']
             message_bodies.append(body)
-            # Por el momento crea los nuevos registros que llegan sqs
-            # query = CreditoPersonas.objects.filter(pk=ObjectId(_idCredidPerson), state=1).first()
-            # serializer = CreditoPersonasSerializer(query, data=jsonRequest, partial=True)
             jsonRequest['reporteBuro'] = None
             jsonRequest['identificacion'] = None
             jsonRequest['ruc'] = None
             jsonRequest['rolesPago'] = None
             jsonRequest['panillaIESS'] = None
             jsonRequest['documentoAprobacion'] = None
-            serializer = CreditoPersonasSerializer(data=jsonRequest)
+            jsonRequest['external_id'] = _idCredidPerson
+            # Por el momento crea los nuevos registros que llegan sqs
+            query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
+            if query is None:
+                serializer = CreditoPersonasSerializer(data=jsonRequest)
+            else:
+                serializer = CreditoPersonasSerializer(query, data=jsonRequest, partial=True)
+            
             if serializer.is_valid():
                 serializer.save()
             # add message to delete
