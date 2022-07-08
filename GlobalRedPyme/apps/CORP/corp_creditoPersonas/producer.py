@@ -19,6 +19,8 @@ def publish(data):
     data.pop('rolesPago')
     data.pop('panillaIESS')
     data.pop('documentoAprobacion')
+    data.pop('imagen')
+    data.pop('imagenComercial')
 
     response = snsClient.publish(
         TopicArn=topicArn,
