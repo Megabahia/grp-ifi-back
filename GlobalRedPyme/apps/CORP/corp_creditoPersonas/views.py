@@ -116,7 +116,7 @@ def creditoPersonas_listOne(request, pk):
 # 'methods' can be used to apply the same modification to multiple methods
 @swagger_auto_schema(methods=['post'], request_body=CreditoPersonasSerializer)
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def creditoPersonas_update(request, pk):
     request.POST._mutable = True
     timezone_now = timezone.localtime(timezone.now())
@@ -449,4 +449,8 @@ def creditoPersonas_listOne_persona(request, pk):
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
-
+#ENCONTRAR UNO
+@api_view(['GET'])
+def prueba(request):
+    get_queue_url()
+    return Response({"err":"dfdagfagfg"}, status=status.HTTP_400_BAD_REQUEST)

@@ -31,8 +31,13 @@ def get_queue_url():
             # Por el momento crea los nuevos registros que llegan sqs
             # query = CreditoPersonas.objects.filter(pk=ObjectId(_idCredidPerson), state=1).first()
             # serializer = CreditoPersonasSerializer(query, data=jsonRequest, partial=True)
+            jsonRequest.pop('reporteBuro')
+            jsonRequest.pop('identificacion')
+            jsonRequest.pop('ruc')
+            jsonRequest.pop('rolesPago')
+            jsonRequest.pop('panillaIESS')
+            jsonRequest.pop('documentoAprobacion')
             serializer = CreditoPersonasSerializer(data=jsonRequest)
-
             if serializer.is_valid():
                 serializer.save()
             # add message to delete
