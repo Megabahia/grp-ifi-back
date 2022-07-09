@@ -28,12 +28,6 @@ def get_queue_url():
             jsonRequest = json.loads(body['Message'])
             _idCredidPerson = json.loads(body['Message'])['_id']
             message_bodies.append(body)
-            jsonRequest['reporteBuro'] = None
-            jsonRequest['identificacion'] = None
-            jsonRequest['ruc'] = None
-            jsonRequest['rolesPago'] = None
-            jsonRequest['panillaIESS'] = None
-            jsonRequest['documentoAprobacion'] = None
             jsonRequest['external_id'] = _idCredidPerson
             # Por el momento crea los nuevos registros que llegan sqs
             query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
