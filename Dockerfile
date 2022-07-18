@@ -9,5 +9,7 @@ COPY . .
 
 WORKDIR /app/GlobalRedPyme
 EXPOSE 8001
-CMD python manage.py runserver 0.0.0.0:8001 && python manage.py crontab add && service cron reload
+RUN python manage.py crontab add
+RUN service cron restart
+CMD python manage.py runserver 0.0.0.0:8001
 
