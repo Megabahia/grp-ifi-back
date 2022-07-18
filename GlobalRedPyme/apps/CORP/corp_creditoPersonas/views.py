@@ -449,8 +449,3 @@ def creditoPersonas_listOne_persona(request, pk):
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
-#ENCONTRAR UNO
-@api_view(['GET'])
-def prueba(request):
-    get_queue_url()
-    return Response({"err":"dfdagfagfg"}, status=status.HTTP_400_BAD_REQUEST)
