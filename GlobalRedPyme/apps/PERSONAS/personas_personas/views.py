@@ -173,11 +173,11 @@ def personas_update(request, pk):
                 # Guardar codigo en base
                 ValidarCuenta.objects.create(codigo=codigo,user_id=request.data['user_id'])
                 # Enviar codigo
-                message = client.messages.create(
-                    from_='whatsapp:'+numeroTwilio,
-                    body=mensaje+' '+codigo,
-                    to='whatsapp:'+serializer.data['whatsapp']
-                )
+                # message = client.messages.create(
+                #     from_='whatsapp:'+numeroTwilio,
+                #     body=mensaje+' '+codigo,
+                #     to='whatsapp:'+serializer.data['whatsapp']
+                # )
 
                 createLog(logModel,serializer.data,logTransaccion)
                 return Response(serializer.data)
