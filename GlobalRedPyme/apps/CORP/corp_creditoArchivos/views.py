@@ -396,6 +396,30 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['created_at'] = str(timezone_now)
         #inserto el dato con los campos requeridos
         CreditoPersonas.objects.create(**data)
+        # Genera el codigo
+        codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
+        subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io",persona.email
+        txt_content = codigo
+        html_content = """
+        <html>
+            <body>
+                <h1>Se acaba de generar el codigo de verificación de su cuenta</h1>
+
+                <p>USTED TIENE UN CREDITO PRE-APROBADO DE $ """+data['monto']+""", PARA QUE REALICE LA COMPRA EN www.credicompra.com, 
+                Por favor ingrese a la plataforma www.credicompra.com y disfrute de su compra:
+                </p>
+
+                <a href='www.credicompra.com'>Link</a>
+
+                Al ingresar por favor digitar el siguiente código: """+codigo+"""<br>
+
+                Saludos,<br>
+                Equipo Global Red Pymes.<br>
+            </body>
+        </html>
+        """
+        publish({'codigo':codigo,'cedula':data['numeroIdentificacion'], 'monto': data['monto']})
+        sendEmail(subject, txt_content, from_email,to,html_content)
         return 'Dato insertado correctamente'
     except Exception as e:
         return str(e)
