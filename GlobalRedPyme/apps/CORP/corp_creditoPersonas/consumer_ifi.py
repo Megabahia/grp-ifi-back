@@ -32,8 +32,8 @@ def get_queue_url():
         region_name = config.AWS_REGION_NAME
         queue_name = config.AWS_QUEUE_NAME
         max_queue_messages = 10
-        aws_access_key_id = config.AWS_ACCESS_KEY_ID
-        aws_secret_access_key = config.AWS_SECRET_ACCESS_KEY
+        aws_access_key_id = config.AWS_ACCESS_KEY_ID_COLAS
+        aws_secret_access_key = config.AWS_SECRET_ACCESS_KEY_COLAS
         sqs = boto3.resource('sqs', region_name=region_name,
                             aws_access_key_id=aws_access_key_id,
                             aws_secret_access_key=aws_secret_access_key)
