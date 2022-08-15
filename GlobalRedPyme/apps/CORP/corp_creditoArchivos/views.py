@@ -223,7 +223,7 @@ def uploadEXCEL_creditosPreaprobados(request,pk):
                 first = False
                 continue
             else:
-                if len(dato)==7:
+                if len(dato)==18:
                     resultadoInsertar=insertarDato_creditoPreaprobado(dato,archivo.empresa_financiera)
                     if resultadoInsertar!='Dato insertado correctamente':
                         contInvalidos+=1
@@ -293,7 +293,7 @@ def uploadEXCEL_creditosPreaprobados_empleados(request,pk):
                 first = False
                 continue
             else:
-                if len(dato)==11:
+                if len(dato)==20:
                     resultadoInsertar=insertarDato_creditoPreaprobado_empleado(dato,archivo.empresa_financiera)
                     if resultadoInsertar!='Dato insertado correctamente':
                         contInvalidos+=1
@@ -333,20 +333,20 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['estado'] = 'PreAprobado'
         data['tipoCredito'] = 'PreAprobado'
         data['canal'] = 'PreAprobado'
-        persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
-        data['user_id'] = persona.user_id
+        # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
+        # data['user_id'] = persona.user_id
         data['numeroIdentificacion'] = dato[5]
-        data['nombres'] = persona.nombres
-        data['apellidos'] = persona.apellidos
-        data['nombresCompleto'] = persona.nombres + ' ' + persona.apellidos
+        data['nombres'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
+        data['apellidos'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
+        data['nombresCompleto'] = data['nombres'] + ' ' + data['apellidos']
         data['empresaIfis_id'] = empresa_financiera
-        data['empresasAplican'] = dato[6]
+        data['empresasAplican'] = dato[17]
         data['created_at'] = str(timezone_now)
         #inserto el dato con los campos requeridos
         CreditoPersonas.objects.create(**data)
         # Genera el codigo
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
-        subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io",persona.email
+        subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io",dato[13]
         txt_content = codigo
         html_content = """
         <html>
@@ -385,20 +385,20 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['estado'] = 'PreAprobado'
         data['tipoCredito'] = 'Empleado'
         data['canal'] = 'Empleado'
-        persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
-        data['user_id'] = persona.user_id
+        # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
+        # data['user_id'] = persona.user_id
         data['numeroIdentificacion'] = dato[5]
-        data['nombres'] = persona.nombres
-        data['apellidos'] = persona.apellidos
-        data['nombresCompleto'] = persona.nombres + ' ' + persona.apellidos
+        data['nombres'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
+        data['apellidos'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
+        data['nombresCompleto'] = data['nombres'] + data['apellidos']
         data['empresaIfis_id'] = empresa_financiera
-        data['empresasAplican'] = dato[10]
+        data['empresasAplican'] = dato[19]
         data['created_at'] = str(timezone_now)
         #inserto el dato con los campos requeridos
         CreditoPersonas.objects.create(**data)
         # Genera el codigo
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
-        subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io",persona.email
+        subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io",dato[13]
         txt_content = codigo
         html_content = """
         <html>

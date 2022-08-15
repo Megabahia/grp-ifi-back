@@ -12,7 +12,7 @@ class CreditoPersonas(models.Model):
     plazo = models.PositiveIntegerField(blank=True, null=True)
     aceptaTerminos = models.SmallIntegerField(default=1)
     estado = models.CharField(max_length=255,blank=True, null=True)
-    user_id = models.CharField(max_length=255,blank=False, null=False)  # Relacion usuario
+    user_id = models.CharField(max_length=255,blank=True, null=True)  # Relacion usuario
     empresaComercial_id = models.CharField(max_length=255,blank=False, null=False)  # Relacion empresa comercial
     empresaIfis_id = models.CharField(max_length=255,blank=False, null=False)  # Relacion empresa ifis
     reporteBuro = models.FileField(blank=True,null=True,upload_to=upload_path)

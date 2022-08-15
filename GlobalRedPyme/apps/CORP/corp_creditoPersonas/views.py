@@ -243,6 +243,10 @@ def creditoPersonas_list(request):
             if "canal" in request.data:
                 if request.data["canal"] != '':
                     filters['canal'] = str(request.data["canal"])
+            
+            if "identificacion" in request.data:
+                if request.data["identificacion"] != '':
+                    filters['identificacion'] = str(request.data["identificacion"])
         
             #Serializar los datos
             query = CreditoPersonas.objects.filter(**filters).order_by('-created_at')
