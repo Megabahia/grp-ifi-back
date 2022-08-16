@@ -390,7 +390,7 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['numeroIdentificacion'] = dato[5]
         data['nombres'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
         data['apellidos'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
-        data['nombresCompleto'] = data['nombres'] + data['apellidos']
+        data['nombresCompleto'] = data['nombres'] + ' ' + data['apellidos']
         data['empresaIfis_id'] = empresa_financiera
         data['empresasAplican'] = dato[19]
         data['created_at'] = str(timezone_now)

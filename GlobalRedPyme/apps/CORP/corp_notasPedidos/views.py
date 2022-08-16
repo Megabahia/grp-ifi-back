@@ -337,19 +337,19 @@ def factura_generar_codigos_envios(request):
 
             # Enviar correo a whatsapp
             # Enviar codigo
-            account_sid = settings.TWILIO_ACCOUNT_SID
-            auth_token = settings.TWILIO_AUTH_TOKEN
-            client = Client(account_sid, auth_token)
-            message = client.messages.create(
-                from_='whatsapp:'+numeroTwilio,
-                body="""Comuniquese con su asesor del credito, el codigo de autorización es """+codigoUsuario,
-                to='whatsapp:'+persona.whatsapp
-            )
-            message = client.messages.create(
-                from_='whatsapp:'+numeroTwilio,
-                body="""Comuniquese con su asesor del credito, el codigo de autorización es """+codigoCorp,
-                to='whatsapp:+593'+empresa.telefono1
-            )
+            # account_sid = settings.TWILIO_ACCOUNT_SID
+            # auth_token = settings.TWILIO_AUTH_TOKEN
+            # client = Client(account_sid, auth_token)
+            # message = client.messages.create(
+            #     from_='whatsapp:'+numeroTwilio,
+            #     body="""Comuniquese con su asesor del credito, el codigo de autorización es """+codigoUsuario,
+            #     to='whatsapp:'+persona.whatsapp
+            # )
+            # message = client.messages.create(
+            #     from_='whatsapp:'+numeroTwilio,
+            #     body="""Comuniquese con su asesor del credito, el codigo de autorización es """+codigoCorp,
+            #     to='whatsapp:+593'+empresa.telefono1
+            # )
 
             # Guardar codigo en base
             AutorizacionCredito.objects.create(codigo=codigoCorp,credito=request.data['_id'],entidad=request.data['user_id'])
