@@ -23,6 +23,7 @@ class FacturasEncabezados(models.Model):
     user_id = models.CharField(max_length=255,null=True,blank=True) # Relacion de usuario
     empresaComercial = models.ForeignKey(Empresas, null=True, on_delete=models.DO_NOTHING)  # Relacion Con la categoria
     credito = models.CharField(max_length=255,null=True, blank=True)  # Relacion Con el credito persona
+    estado = models.CharField(max_length=255,null=True, blank=True)
         
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

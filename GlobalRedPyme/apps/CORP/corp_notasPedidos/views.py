@@ -221,8 +221,13 @@ def factura_update(request, pk):
             if 'created_at' in request.data:
                 request.data.pop('created_at')
 
-            request.data['empresaComercial'] = ObjectId(request.data['empresaComercial'])
-            request.data['credito'] = request.data['credito']
+            if 'empresaComercial' in request.data:
+                if request.data['empresaComercial'] != '':
+                    request.data['empresaComercial'] = ObjectId(request.data['empresaComercial'])
+
+            if 'credito' in request.data:
+                if request.data['credito'] != '':
+                    request.data['credito'] = request.data['credito']
 
             serializer = FacturasSerializer(query, data=request.data,partial=True)
             if serializer.is_valid():

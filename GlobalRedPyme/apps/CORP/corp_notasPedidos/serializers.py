@@ -125,12 +125,14 @@ class FacturasSerializer(serializers.ModelSerializer):
        	fields = '__all__'
     
     def update(self, instance, validated_data):
-        detalles_database = {detalle.id: detalle for detalle in instance.detalles.all()}
-        detalles_actualizar = {item['id']: item for item in validated_data['detalles']}
-
         # Actualiza la factura cabecera
         instance.__dict__.update(validated_data) 
         instance.save()
+
+        if 'detalles' not in validated_data:
+            return instance
+        detalles_database = {detalle.id: detalle for detalle in instance.detalles.all()}
+        detalles_actualizar = {item['id']: item for item in validated_data['detalles']}
 
         # Eliminar los detalles que no esté incluida en la solicitud de la factura detalles
         for detalle in instance.detalles.all():
