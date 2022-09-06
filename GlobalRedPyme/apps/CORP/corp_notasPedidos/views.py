@@ -1,7 +1,7 @@
 from apps.PERSONAS.personas_personas.models import Personas
 from apps.CENTRAL.central_catalogo.models import  Catalogo
 from apps.CORP.corp_empresas.models import  Empresas
-from apps.CORP.corp_creditoPersonas.models import  AutorizacionCredito
+from apps.CORP.corp_creditoPersonas.models import  AutorizacionCredito, CreditoPersonas
 from apps.CORP.corp_notasPedidos.models import FacturasEncabezados, FacturasDetalles
 from apps.CORP.corp_notasPedidos.serializers import FacturasSerializer, FacturasDetallesSerializer, FacturasListarSerializer, FacturaSerializer, FacturasListarTablaSerializer
 from rest_framework import status
@@ -296,6 +296,7 @@ def factura_generar_codigos_envios(request):
             # Buscar informacion de la persona y empresa corp
             persona = Personas.objects.filter(user_id=request.data['user_id'],state=1).first()
             empresa = Empresas.objects.filter(pk=ObjectId(request.data['empresaComercial_id']),state=1).first()
+            montoDisponible = CreditoPersonas.objects.filter(pk=ObjectId(request.data['_id'])).first().montoDisponible
             # Genera el codigo
             longitud_codigo = Catalogo.objects.filter(tipo='CONFIG_TWILIO',nombre='LONGITUD_CODIGO',state=1).first().valor
             numeroTwilio = Catalogo.objects.filter(tipo='CONFIG_TWILIO',nombre='NUMERO_TWILIO',state=1).first().valor
@@ -360,7 +361,7 @@ def factura_generar_codigos_envios(request):
             AutorizacionCredito.objects.create(codigo=codigoCorp,credito=request.data['_id'],entidad=request.data['user_id'])
             AutorizacionCredito.objects.create(codigo=codigoUsuario,credito=request.data['_id'],entidad=request.data['empresaComercial_id'])
 
-            new_serializer_data={'estado': 'ok','codigoUsuario':codigoUsuario,'codigoCorp':codigoCorp}
+            new_serializer_data={'estado': 'ok','codigoUsuario':codigoUsuario,'codigoCorp':codigoCorp, 'montoDisponible': montoDisponible}
             #envio de datos
             return Response(new_serializer_data,status=status.HTTP_200_OK)
         except Exception as e: 

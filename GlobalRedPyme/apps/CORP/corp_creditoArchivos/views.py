@@ -328,6 +328,7 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['vigencia'] = dato[0].replace('"', "")[0:10] if dato[0] != "NULL" else None
         data['concepto'] = dato[1].replace('"', "") if dato[1] != "NULL" else None
         data['monto'] = dato[2].replace('"', "") if dato[2] != "NULL" else None
+        data['montoDisponible'] = dato[2].replace('"', "") if dato[2] != "NULL" else None
         data['plazo'] = dato[3].replace('"', "") if dato[3] != "NULL" else None
         data['interes'] = dato[4].replace('"', "") if dato[4] != "NULL" else None
         data['estado'] = 'PreAprobado'
