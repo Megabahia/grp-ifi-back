@@ -59,3 +59,13 @@ class AutorizacionCredito(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     state = models.SmallIntegerField(default=1)
+
+class LecturaArchivos(models.Model):
+    _id = models.ObjectIdField()
+    numeroCredito = models.CharField(max_length=200,null=False) # Relacion credito persona
+    identificacion = models.CharField(max_length=250,blank=False, null=False)
+    ruc = models.CharField(max_length=250,blank=False, null=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    state = models.SmallIntegerField(default=1)

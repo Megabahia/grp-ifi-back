@@ -19,6 +19,10 @@ from django.conf import settings
 # Swagger
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+# Lectura de AWS s3
+import boto3
+import re
+from apps.config import config
 #excel
 import openpyxl
 # Generar codigos aleatorios
@@ -67,7 +71,7 @@ def creditoPersonas_create(request):
             if 'nombres' in request.data:
                 if request.data['nombres'] != "":
                     request.data['nombresCompleto'] = request.data['nombres'] + ' ' + request.data['apellidos']
-        
+
             serializer = CreditoPersonasSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -75,8 +79,8 @@ def creditoPersonas_create(request):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             createLog(logModel,serializer.errors,logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e: 
-            err={"error":'Un error ha ocurrido: {}'.format(e)}  
+        except Exception as e:
+            err={"error":'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,7 +103,7 @@ def creditoPersonas_listOne(request, pk):
         try:
             query = CreditoPersonas.objects.filter(pk=ObjectId(pk), state=1).first()
         except CreditoPersonas.DoesNotExist:
-            err={"error":"No existe"}  
+            err={"error":"No existe"}
             createLog(logModel,err,logExcepcion)
             return Response(err,status=status.HTTP_404_NOT_FOUND)
         #tomar el dato
@@ -107,8 +111,8 @@ def creditoPersonas_listOne(request, pk):
             serializer = CreditoPersonasSerializer(query)
             createLog(logModel,serializer.data,logTransaccion)
             return Response(serializer.data,status=status.HTTP_200_OK)
-    except Exception as e: 
-            err={"error":'Un error ha ocurrido: {}'.format(e)}  
+    except Exception as e:
+            err={"error":'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
@@ -152,10 +156,10 @@ def creditoPersonas_update(request, pk):
                 return Response(serializer.data)
             createLog(logModel,serializer.errors,logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e: 
-        err={"error":'Un error ha ocurrido: {}'.format(e)}  
+    except Exception as e:
+        err={"error":'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel,err,logExcepcion)
-        return Response(err, status=status.HTTP_400_BAD_REQUEST) 
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 #ELIMINAR
 @api_view(['DELETE'])
@@ -176,7 +180,7 @@ def creditoPersonas_delete(request, pk):
         try:
             query = CreditoPersonas.objects.filter(user_id=pk, state=1).first()
         except CreditoPersonas.DoesNotExist:
-            err={"error":"No existe"}  
+            err={"error":"No existe"}
             createLog(logModel,err,logExcepcion)
             return Response(err,status=status.HTTP_404_NOT_FOUND)
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -189,10 +193,10 @@ def creditoPersonas_delete(request, pk):
                 return Response(serializer.data,status=status.HTTP_200_OK)
             createLog(logModel,serializer.errors,logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e: 
-        err={"error":'Un error ha ocurrido: {}'.format(e)}  
+    except Exception as e:
+        err={"error":'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel,err,logExcepcion)
-        return Response(err, status=status.HTTP_400_BAD_REQUEST) 
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -223,31 +227,31 @@ def creditoPersonas_list(request):
             if "empresaComercial_id" in request.data:
                 if request.data["empresaComercial_id"] != '':
                     filters['empresaComercial_id'] = ObjectId(request.data["empresaComercial_id"])
-            
+
             if "empresaIfis_id" in request.data:
                 if request.data["empresaIfis_id"] != '':
                     filters['empresaIfis_id'] = ObjectId(request.data["empresaIfis_id"])
-            
+
             if "estado" in request.data:
                 if request.data["estado"] != '':
                     filters['estado__icontains'] = request.data["estado"]
-            
+
             if "tipoCredito" in request.data:
                 if request.data["tipoCredito"] != '':
                     filters['tipoCredito'] = str(request.data["tipoCredito"])
-            
+
             if "user_id" in request.data:
                 if request.data["user_id"] != '':
                     filters['user_id'] = str(request.data["user_id"])
-            
+
             if "canal" in request.data:
                 if request.data["canal"] != '':
                     filters['canal'] = str(request.data["canal"])
-            
+
             if "identificacion" in request.data:
                 if request.data["identificacion"] != '':
                     filters['identificacion'] = str(request.data["identificacion"])
-        
+
             #Serializar los datos
             query = CreditoPersonas.objects.filter(**filters).order_by('-created_at')
             serializer = CreditoPersonasSerializer(query[offset:limit], many=True)
@@ -255,8 +259,8 @@ def creditoPersonas_list(request):
             'info':serializer.data}
             #envio de datos
             return Response(new_serializer_data,status=status.HTTP_200_OK)
-        except Exception as e: 
-            err={"error":'Un error ha ocurrido: {}'.format(e)}  
+        except Exception as e:
+            err={"error":'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
@@ -293,13 +297,13 @@ def uploadEXCEL_creditosPreaprobados(request):
                 if len(dato)==7:
                     resultadoInsertar=insertarDato_creditoPreaprobado(dato,request.data['empresa_financiera'])
                     if resultadoInsertar!='Dato insertado correctamente':
-                        contInvalidos+=1 
+                        contInvalidos+=1
                         errores.append({"error":"Error en la línea "+str(contTotal)+": "+str(resultadoInsertar)})
                     else:
                         contValidos+=1
                 else:
-                    contInvalidos+=1    
-                    errores.append({"error":"Error en la línea "+str(contTotal)+": la fila tiene un tamaño incorrecto ("+str(len(dato))+")"}) 
+                    contInvalidos+=1
+                    errores.append({"error":"Error en la línea "+str(contTotal)+": la fila tiene un tamaño incorrecto ("+str(len(dato))+")"})
 
         result={"mensaje":"La Importación se Realizo Correctamente",
         "correctos":contValidos,
@@ -309,7 +313,7 @@ def uploadEXCEL_creditosPreaprobados(request):
         return Response(result, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        err={"error":'Error verifique el archivo, un error ha ocurrido: {}'.format(e)}  
+        err={"error":'Error verifique el archivo, un error ha ocurrido: {}'.format(e)}
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 # INSERTAR DATOS EN LA BASE INDIVIDUAL
@@ -373,13 +377,13 @@ def uploadEXCEL_creditosPreaprobados_empleados(request):
                 if len(dato)==11:
                     resultadoInsertar=insertarDato_creditoPreaprobado_empleado(dato,request.data['empresa_financiera'])
                     if resultadoInsertar!='Dato insertado correctamente':
-                        contInvalidos+=1 
+                        contInvalidos+=1
                         errores.append({"error":"Error en la línea "+str(contTotal)+": "+str(resultadoInsertar)})
                     else:
                         contValidos+=1
                 else:
-                    contInvalidos+=1    
-                    errores.append({"error":"Error en la línea "+str(contTotal)+": la fila tiene un tamaño incorrecto ("+str(len(dato))+")"}) 
+                    contInvalidos+=1
+                    errores.append({"error":"Error en la línea "+str(contTotal)+": la fila tiene un tamaño incorrecto ("+str(len(dato))+")"})
 
         result={"mensaje":"La Importación se Realizo Correctamente",
         "correctos":contValidos,
@@ -389,7 +393,7 @@ def uploadEXCEL_creditosPreaprobados_empleados(request):
         return Response(result, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        err={"error":'Error verifique el archivo, un error ha ocurrido: {}'.format(e)}  
+        err={"error":'Error verifique el archivo, un error ha ocurrido: {}'.format(e)}
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 # INSERTAR DATOS EN LA BASE INDIVIDUAL
@@ -440,7 +444,7 @@ def creditoPersonas_listOne_persona(request, pk):
         try:
             query = CreditoPersonas.objects.filter(pk=ObjectId(pk), state=1).first()
         except CreditoPersonas.DoesNotExist:
-            err={"error":"No existe"}  
+            err={"error":"No existe"}
             createLog(logModel,err,logExcepcion)
             return Response(err,status=status.HTTP_404_NOT_FOUND)
         #tomar el dato
@@ -448,8 +452,132 @@ def creditoPersonas_listOne_persona(request, pk):
             serializer = CreditoPersonasPersonaSerializer(query)
             createLog(logModel,serializer.data,logTransaccion)
             return Response(serializer.data,status=status.HTTP_200_OK)
-    except Exception as e: 
-            err={"error":'Un error ha ocurrido: {}'.format(e)}  
+    except Exception as e:
+            err={"error":'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def creditoPersonas_lecturaArchivos(request, pk):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'lecturaArchivos/' + pk,
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            query = CreditoPersonas.objects.filter(pk=ObjectId(pk), state=1).first()
+        except CreditoPersonas.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'GET':
+            print(query.identificacion.name)
+            dato1 = None if query.identificacion.name is None else obtenerDatosArchivos(str(query.identificacion.name))
+            dato2 = None if query.ruc.name is None else obtenerDatosArchivos(str(query.ruc.name))
+            # serializer = CreditoPersonasPersonaSerializer(query)
+            # createLog(logModel, serializer.data, logTransaccion)
+            return Response({'cedula':dato1,'ruc':dato2}, status=status.HTTP_200_OK)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+def obtenerDatosArchivos(nombreArchivo):
+    # Function invokes
+    jobId = InvokeTextDetectJob('globalredpymes',nombreArchivo)
+    print("Started job with id: {}".format(jobId))
+    respuesta = {}
+    if (CheckJobComplete(jobId)):
+        response = JobResults(jobId)
+        for resultPage in response:
+            for item in resultPage["Blocks"]:
+                if item['BlockType'] == 'LINE':
+                    if re.match("\d{10}001", item['Text']):
+                        respuesta['ruc'] = item['Text']
+
+                    elif re.match("No. \d{9}-[0-9]", item['Text']):
+                        respuesta['identificacion'] = item['Text'][4:]
+
+                    elif re.match("^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", item['Text']):
+                        respuesta['fechaExpiracion'] = item['Text']
+
+                    elif re.match("[aA-Zz]\d{4}[aA-Zz]\d{4}", item['Text']):
+                        respuesta['codigoDactilar'] = item['Text']
+
+    print("-------------------Imprimir-----------------")
+    return respuesta
+
+import time
+## Textract APIs used - "start_document_text_detection", "get_document_text_detection"
+def InvokeTextDetectJob(bucket, nombreArchivo):
+    response = None
+    textarctmodule = boto3.client(
+        'textract',
+        aws_access_key_id=config.AWS_ACCESS_KEY_ID_TEXTRACT,
+        aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY_TEXTRACT,
+        region_name='us-east-1'
+    )
+    response = textarctmodule.start_document_text_detection(
+        DocumentLocation={
+            'S3Object': {
+                'Bucket': bucket,
+                # 'Name': nombreArchivo
+                'Name': 'CORP/documentosCreditosPersonas/62d97613bceeaa781e803920_1658498310065_comprobante_1.pdf'
+            }
+        }
+    )
+    return response["JobId"]
+
+
+def CheckJobComplete(jobId):
+    time.sleep(5)
+    client = boto3.client(
+        'textract',
+        aws_access_key_id=config.AWS_ACCESS_KEY_ID_TEXTRACT,
+        aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY_TEXTRACT,
+        region_name='us-east-1'
+    )
+    response = client.get_document_text_detection(JobId=jobId)
+    status = response["JobStatus"]
+    print("Job status: {}".format(status))
+    while (status == "IN_PROGRESS"):
+        time.sleep(5)
+        response = client.get_document_text_detection(JobId=jobId)
+        status = response["JobStatus"]
+        print("Job status: {}".format(status))
+    return status
+
+
+def JobResults(jobId):
+    pages = []
+    client = boto3.client(
+        'textract',
+        aws_access_key_id=config.AWS_ACCESS_KEY_ID_TEXTRACT,
+        aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY_TEXTRACT,
+        region_name='us-east-1'
+    )
+    response = client.get_document_text_detection(JobId=jobId)
+
+    pages.append(response)
+    print("Resultset page recieved: {}".format(len(pages)))
+    nextToken = None
+    if ('NextToken' in response):
+        nextToken = response['NextToken']
+        while (nextToken):
+            response = client.get_document_text_detection(JobId=jobId, NextToken=nextToken)
+            pages.append(response)
+            print("Resultset page recieved: {}".format(len(pages)))
+            nextToken = None
+            if ('NextToken' in response):
+                nextToken = response['NextToken']
+    return pages
 
