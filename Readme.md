@@ -26,6 +26,10 @@ python manage.py runserver
 sudo docker build -t papagayodev/grp-backend-g-ifi:dev .
 ```
 
+```
+docker buildx build --platform linux/amd64 -t papagayodev/grp-backend-g-ifi:dev .
+```
+
 ## 2.Subir la imagen al Docker Hub (ejecutar "docker login" en caso de no estar logueado desde consola en dockerhub)
 ```shell
 sudo docker push papagayodev/grp-backend-g-ifi:dev
