@@ -48,6 +48,10 @@ def get_queue_url():
             jsonRequest['external_id'] = _idCredidPerson
             # Por el momento crea los nuevos registros que llegan sqs
             query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
+            print('query', query)
+            new_list = list(jsonRequest.items())
+            print(new_list)
+            # print('jsonRequest', type(jsonRequest))
             if query is None:
                 reporteBuro = jsonRequest.pop('reporteBuro')
                 identificacion = jsonRequest.pop('identificacion')
@@ -55,49 +59,52 @@ def get_queue_url():
                 rolesPago = jsonRequest.pop('rolesPago')
                 panillaIESS = jsonRequest.pop('panillaIESS')
                 documentoAprobacion = jsonRequest.pop('documentoAprobacion')
-                CreditoPersonas.objects.create(
-                    numero=jsonRequest['numero'],
-                    canal=jsonRequest['canal'],
-                    monto=jsonRequest['monto'],
-                    plazo=jsonRequest['plazo'],
-                    aceptaTerminos=jsonRequest['aceptaTerminos'],
-                    estado=jsonRequest['estado'],
-                    user_id=jsonRequest['user_id'],
-                    empresaComercial_id=jsonRequest['empresaComercial_id'],
-                    empresaIfis_id=jsonRequest['empresaIfis_id'],
-                    reporteBuro=reporteBuro,
-                    calificacionBuro=jsonRequest['calificacionBuro'],
-                    buroValido=jsonRequest['buroValido'],
-                    identificacion=identificacion,
-                    ruc=ruc,
-                    rolesPago=rolesPago,
-                    panillaIESS=panillaIESS,
-                    tomarSolicitud=jsonRequest['tomarSolicitud'],
-                    fechaAprobacion=jsonRequest['fechaAprobacion'],
-                    tipoCredito=jsonRequest['tipoCredito'],
-                    concepto=jsonRequest['concepto'],
-                    documentoAprobacion=documentoAprobacion,
-                    empresasAplican=jsonRequest['empresasAplican'],
-                    vigencia=jsonRequest['vigencia'],
-                    interes=jsonRequest['interes'],
-                    nombres=jsonRequest['nombres'],
-                    apellidos=jsonRequest['apellidos'],
-                    nombresCompleto=jsonRequest['nombresCompleto'],
-                    fechaAprobado=jsonRequest['fechaAprobado'],
-                    numeroIdentificacion=jsonRequest['numeroIdentificacion'],
-                    codigoCliente=jsonRequest['codigoCliente'],
-                    codigoCorp=jsonRequest['codigoCorp'],
-                    numeroFactura=jsonRequest['numeroFactura'],
-                    montoVenta=jsonRequest['montoVenta'],
-                    checkPagare=jsonRequest['checkPagare'],
-                    checkTablaAmortizacion=jsonRequest['checkTablaAmortizacion'],
-                    checkManualPago=jsonRequest['checkManualPago'],
-                    checkCedula=jsonRequest['checkCedula'],
-                    external_id=jsonRequest['external_id'],
-                    created_at=jsonRequest['created_at'],
-                    updated_at=jsonRequest['updated_at'],
-                    state=jsonRequest['state'],
-                    )
+                print('antes de guardar')
+                CreditoPersonas.objects.create(**new_list)
+                # CreditoPersonas.objects.create(
+                #     numero=jsonRequest['numero'],
+                #     canal=jsonRequest['canal'],
+                #     monto=jsonRequest['monto'],
+                #     plazo=jsonRequest['plazo'],
+                #     aceptaTerminos=jsonRequest['aceptaTerminos'],
+                #     estado=jsonRequest['estado'],
+                #     user_id=jsonRequest['user_id'],
+                #     empresaComercial_id=jsonRequest['empresaComercial_id'],
+                #     empresaIfis_id=jsonRequest['empresaIfis_id'],
+                #     reporteBuro=reporteBuro,
+                #     calificacionBuro=jsonRequest['calificacionBuro'],
+                #     buroValido=jsonRequest['buroValido'],
+                #     identificacion=identificacion,
+                #     ruc=ruc,
+                #     rolesPago=rolesPago,
+                #     panillaIESS=panillaIESS,
+                #     tomarSolicitud=jsonRequest['tomarSolicitud'],
+                #     fechaAprobacion=jsonRequest['fechaAprobacion'],
+                #     tipoCredito=jsonRequest['tipoCredito'],
+                #     concepto=jsonRequest['concepto'],
+                #     documentoAprobacion=documentoAprobacion,
+                #     empresasAplican=jsonRequest['empresasAplican'],
+                #     vigencia=jsonRequest['vigencia'],
+                #     interes=jsonRequest['interes'],
+                #     nombres=jsonRequest['nombres'],
+                #     apellidos=jsonRequest['apellidos'],
+                #     nombresCompleto=jsonRequest['nombresCompleto'],
+                #     fechaAprobado=jsonRequest['fechaAprobado'],
+                #     numeroIdentificacion=jsonRequest['numeroIdentificacion'],
+                #     codigoCliente=jsonRequest['codigoCliente'],
+                #     codigoCorp=jsonRequest['codigoCorp'],
+                #     numeroFactura=jsonRequest['numeroFactura'],
+                #     montoVenta=jsonRequest['montoVenta'],
+                #     checkPagare=jsonRequest['checkPagare'],
+                #     checkTablaAmortizacion=jsonRequest['checkTablaAmortizacion'],
+                #     checkManualPago=jsonRequest['checkManualPago'],
+                #     checkCedula=jsonRequest['checkCedula'],
+                #     external_id=jsonRequest['external_id'],
+                #     created_at=jsonRequest['created_at'],
+                #     updated_at=jsonRequest['updated_at'],
+                #     state=jsonRequest['state'],
+                #     )
+                print('se guardo')
             else:
                 reporteBuro = jsonRequest.pop('reporteBuro')
                 identificacion = jsonRequest.pop('identificacion')
@@ -114,7 +121,7 @@ def get_queue_url():
                 query.estado=jsonRequest['estado']
                 query.user_id=jsonRequest['user_id']
                 query.empresaComercial_id=jsonRequest['empresaComercial_id']
-                query.empresaIfis_id=jsonRequest['empresaIfis_id']
+                # query.empresaIfis_id=jsonRequest['empresaIfis_id']
                 query.reporteBuro=reporteBuro
                 query.calificacionBuro=jsonRequest['calificacionBuro']
                 query.buroValido=jsonRequest['buroValido']

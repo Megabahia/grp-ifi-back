@@ -581,3 +581,8 @@ def JobResults(jobId):
                 nextToken = response['NextToken']
     return pages
 
+@api_view(['GET'])
+def prueba(request):
+    get_queue_url()
+    err = {"error": "No existe"}
+    return Response(err, status=status.HTTP_404_NOT_FOUND)

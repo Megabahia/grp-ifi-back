@@ -9,6 +9,7 @@ from apps.CORP.corp_creditoPersonas.views import (
     uploadEXCEL_creditosPreaprobados_empleados,
     creditoPersonas_listOne_persona,
     creditoPersonas_lecturaArchivos,
+    prueba,
 )
 
 app_name = 'corp_creditoPersonas'
@@ -24,4 +25,5 @@ urlpatterns = [
          name="uploadEXCEL_creditosPreaprobados_empleados"),
     path('listOne/persona/<str:pk>', creditoPersonas_listOne_persona, name="creditoPersonas_listOne_persona"),
     path('lecturaArchivos/<str:pk>', creditoPersonas_lecturaArchivos, name="creditoPersonas_lecturaArchivos"),
+    path('prueba', prueba, name="prueba"),
 ]
