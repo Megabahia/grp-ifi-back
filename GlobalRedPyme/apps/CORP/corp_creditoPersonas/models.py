@@ -1,3 +1,4 @@
+import jsonfield
 from djongo import models
 
 def upload_path(instance, filname):
@@ -9,6 +10,7 @@ class CreditoPersonas(models.Model):
     numero = models.IntegerField(blank=True, null=True)
     canal = models.CharField(max_length=255,blank=True, null=True)
     monto = models.FloatField(blank=True, null=True)
+    cuota = models.FloatField(blank=True, null=True)
     plazo = models.PositiveIntegerField(blank=True, null=True)
     aceptaTerminos = models.SmallIntegerField(default=1)
     estado = models.CharField(max_length=255,blank=True, null=True)
@@ -19,9 +21,21 @@ class CreditoPersonas(models.Model):
     calificacionBuro = models.CharField(max_length=255,blank=True, null=True)
     buroValido = models.CharField(max_length=255,blank=True, null=True)
     identificacion = models.FileField(blank=True,null=True,upload_to=upload_path)
+    papeletaVotacion = models.FileField(blank=True,null=True,upload_to=upload_path)
+    identificacionConyuge = models.FileField(blank=True,null=True,upload_to=upload_path)
+    papeletaVotacionConyuge = models.FileField(blank=True,null=True,upload_to=upload_path)
+    planillaLuzNegocio = models.FileField(blank=True,null=True,upload_to=upload_path)
+    planillaLuzDomicilio = models.FileField(blank=True,null=True,upload_to=upload_path)
+    facturas = models.FileField(blank=True,null=True,upload_to=upload_path)
+    matriculaVehiculo = models.FileField(blank=True,null=True,upload_to=upload_path)
+    impuestoPredial = models.FileField(blank=True,null=True,upload_to=upload_path)
+    buroCredito = models.FileField(blank=True,null=True,upload_to=upload_path)
+    evaluacionCrediticia = models.FileField(blank=True,null=True,upload_to=upload_path)
     ruc = models.FileField(blank=True,null=True,upload_to=upload_path)
     rolesPago = models.FileField(blank=True,null=True,upload_to=upload_path)
     panillaIESS = models.FileField(blank=True,null=True,upload_to=upload_path)
+    mecanizadoIess = models.FileField(blank=True,null=True,upload_to=upload_path)
+    fotoCarnet = models.FileField(blank=True,null=True,upload_to=upload_path)
     tomarSolicitud = models.CharField(max_length=255,null=True, blank=True)
     fechaAprobacion = models.DateTimeField(null=True, blank=True)
     tipoCredito = models.CharField(max_length=255,null=True, blank=True)
@@ -45,6 +59,11 @@ class CreditoPersonas(models.Model):
     checkCedula = models.BooleanField(blank=True, null=True)
     external_id = models.CharField(max_length=255,blank=True, null=True)
     montoDisponible = models.FloatField(null=True, blank=True)
+
+    user = jsonfield.JSONField()
+    observacion = models.TextField(null=True, blank=True)
+
+    checks = jsonfield.JSONField()
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

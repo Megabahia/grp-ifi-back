@@ -38,7 +38,6 @@ def get_queue_url():
                             aws_access_key_id=aws_access_key_id,
                             aws_secret_access_key=aws_secret_access_key)
         queue = sqs.get_queue_by_name(QueueName=queue_name)
-
         # Consultar la cola maximo 10 mensajes
         for message in queue.receive_messages(MaxNumberOfMessages=max_queue_messages):
             # process message body
@@ -48,119 +47,73 @@ def get_queue_url():
             jsonRequest['external_id'] = _idCredidPerson
             # Por el momento crea los nuevos registros que llegan sqs
             query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
-            print('query', query)
-            new_list = list(jsonRequest.items())
-            print(new_list)
-            # print('jsonRequest', type(jsonRequest))
+            print('jsonRequest', jsonRequest)
             if query is None:
-                reporteBuro = jsonRequest.pop('reporteBuro')
-                identificacion = jsonRequest.pop('identificacion')
-                ruc = jsonRequest.pop('ruc')
-                rolesPago = jsonRequest.pop('rolesPago')
-                panillaIESS = jsonRequest.pop('panillaIESS')
-                documentoAprobacion = jsonRequest.pop('documentoAprobacion')
+                # Quitar los campos que no estan en el modelo de credito persona
+                jsonRequest.pop('whatsappPersona')
+                jsonRequest.pop('emailPersona')
+                jsonRequest['estado'] = 'Nuevo'
                 print('antes de guardar')
-                CreditoPersonas.objects.create(**new_list)
-                # CreditoPersonas.objects.create(
-                #     numero=jsonRequest['numero'],
-                #     canal=jsonRequest['canal'],
-                #     monto=jsonRequest['monto'],
-                #     plazo=jsonRequest['plazo'],
-                #     aceptaTerminos=jsonRequest['aceptaTerminos'],
-                #     estado=jsonRequest['estado'],
-                #     user_id=jsonRequest['user_id'],
-                #     empresaComercial_id=jsonRequest['empresaComercial_id'],
-                #     empresaIfis_id=jsonRequest['empresaIfis_id'],
-                #     reporteBuro=reporteBuro,
-                #     calificacionBuro=jsonRequest['calificacionBuro'],
-                #     buroValido=jsonRequest['buroValido'],
-                #     identificacion=identificacion,
-                #     ruc=ruc,
-                #     rolesPago=rolesPago,
-                #     panillaIESS=panillaIESS,
-                #     tomarSolicitud=jsonRequest['tomarSolicitud'],
-                #     fechaAprobacion=jsonRequest['fechaAprobacion'],
-                #     tipoCredito=jsonRequest['tipoCredito'],
-                #     concepto=jsonRequest['concepto'],
-                #     documentoAprobacion=documentoAprobacion,
-                #     empresasAplican=jsonRequest['empresasAplican'],
-                #     vigencia=jsonRequest['vigencia'],
-                #     interes=jsonRequest['interes'],
-                #     nombres=jsonRequest['nombres'],
-                #     apellidos=jsonRequest['apellidos'],
-                #     nombresCompleto=jsonRequest['nombresCompleto'],
-                #     fechaAprobado=jsonRequest['fechaAprobado'],
-                #     numeroIdentificacion=jsonRequest['numeroIdentificacion'],
-                #     codigoCliente=jsonRequest['codigoCliente'],
-                #     codigoCorp=jsonRequest['codigoCorp'],
-                #     numeroFactura=jsonRequest['numeroFactura'],
-                #     montoVenta=jsonRequest['montoVenta'],
-                #     checkPagare=jsonRequest['checkPagare'],
-                #     checkTablaAmortizacion=jsonRequest['checkTablaAmortizacion'],
-                #     checkManualPago=jsonRequest['checkManualPago'],
-                #     checkCedula=jsonRequest['checkCedula'],
-                #     external_id=jsonRequest['external_id'],
-                #     created_at=jsonRequest['created_at'],
-                #     updated_at=jsonRequest['updated_at'],
-                #     state=jsonRequest['state'],
-                #     )
+                CreditoPersonas.objects.create(**jsonRequest)
                 print('se guardo')
             else:
-                reporteBuro = jsonRequest.pop('reporteBuro')
-                identificacion = jsonRequest.pop('identificacion')
-                ruc = jsonRequest.pop('ruc')
-                rolesPago = jsonRequest.pop('rolesPago')
-                panillaIESS = jsonRequest.pop('panillaIESS')
-                documentoAprobacion = jsonRequest.pop('documentoAprobacion')
-                
-                query.numero=jsonRequest['numero']
-                query.canal=jsonRequest['canal']
-                query.monto=jsonRequest['monto']
-                query.plazo=jsonRequest['plazo']
-                query.aceptaTerminos=jsonRequest['aceptaTerminos']
-                query.estado=jsonRequest['estado']
-                query.user_id=jsonRequest['user_id']
-                query.empresaComercial_id=jsonRequest['empresaComercial_id']
-                # query.empresaIfis_id=jsonRequest['empresaIfis_id']
-                query.reporteBuro=reporteBuro
-                query.calificacionBuro=jsonRequest['calificacionBuro']
-                query.buroValido=jsonRequest['buroValido']
-                query.identificacion=identificacion
-                query.ruc=ruc
-                query.rolesPago=rolesPago
-                query.panillaIESS=panillaIESS
-                query.tomarSolicitud=jsonRequest['tomarSolicitud']
-                query.fechaAprobacion=jsonRequest['fechaAprobacion']
-                query.tipoCredito=jsonRequest['tipoCredito']
-                query.concepto=jsonRequest['concepto']
-                query.documentoAprobacion=documentoAprobacion
-                query.empresasAplican=jsonRequest['empresasAplican']
-                query.vigencia=jsonRequest['vigencia']
-                query.interes=jsonRequest['interes']
-                query.nombres=jsonRequest['nombres']
-                query.apellidos=jsonRequest['apellidos']
-                query.nombresCompleto=jsonRequest['nombresCompleto']
-                query.fechaAprobado=jsonRequest['fechaAprobado']
-                query.numeroIdentificacion=jsonRequest['numeroIdentificacion']
-                query.codigoCliente=jsonRequest['codigoCliente']
-                query.codigoCorp=jsonRequest['codigoCorp']
-                query.numeroFactura=jsonRequest['numeroFactura']
-                query.montoVenta=jsonRequest['montoVenta']
-                query.checkPagare=jsonRequest['checkPagare']
-                query.checkTablaAmortizacion=jsonRequest['checkTablaAmortizacion']
-                query.checkManualPago=jsonRequest['checkManualPago']
-                query.checkCedula=jsonRequest['checkCedula']
-                query.external_id=jsonRequest['external_id']
-                query.created_at=jsonRequest['created_at']
-                query.updated_at=jsonRequest['updated_at']
-                query.state=jsonRequest['state']
-                query.save()
+                # Quitar los campos que no estan en el modelo de credito persona
+                jsonRequest.pop('whatsappPersona')
+                jsonRequest.pop('emailPersona')
+
+                print('antes de actualizar')
+                CreditoPersonas.objects.update(**jsonRequest)
+                print('se guardo')
+
+                # query.numero=jsonRequest['numero']
+                # query.canal=jsonRequest['canal']
+                # query.monto=jsonRequest['monto']
+                # query.plazo=jsonRequest['plazo']
+                # query.aceptaTerminos=jsonRequest['aceptaTerminos']
+                # query.estado=jsonRequest['estado']
+                # query.user_id=jsonRequest['user_id']
+                # query.empresaComercial_id=jsonRequest['empresaComercial_id']
+                # # query.empresaIfis_id=jsonRequest['empresaIfis_id']
+                # query.reporteBuro=reporteBuro
+                # query.calificacionBuro=jsonRequest['calificacionBuro']
+                # query.buroValido=jsonRequest['buroValido']
+                # query.identificacion=identificacion
+                # query.ruc=ruc
+                # query.rolesPago=rolesPago
+                # query.panillaIESS=panillaIESS
+                # query.tomarSolicitud=jsonRequest['tomarSolicitud']
+                # query.fechaAprobacion=jsonRequest['fechaAprobacion']
+                # query.tipoCredito=jsonRequest['tipoCredito']
+                # query.concepto=jsonRequest['concepto']
+                # query.documentoAprobacion=documentoAprobacion
+                # query.empresasAplican=jsonRequest['empresasAplican']
+                # query.vigencia=jsonRequest['vigencia']
+                # query.interes=jsonRequest['interes']
+                # query.nombres=jsonRequest['nombres']
+                # query.apellidos=jsonRequest['apellidos']
+                # query.nombresCompleto=jsonRequest['nombresCompleto']
+                # query.fechaAprobado=jsonRequest['fechaAprobado']
+                # query.numeroIdentificacion=jsonRequest['numeroIdentificacion']
+                # query.codigoCliente=jsonRequest['codigoCliente']
+                # query.codigoCorp=jsonRequest['codigoCorp']
+                # query.numeroFactura=jsonRequest['numeroFactura']
+                # query.montoVenta=jsonRequest['montoVenta']
+                # query.checkPagare=jsonRequest['checkPagare']
+                # query.checkTablaAmortizacion=jsonRequest['checkTablaAmortizacion']
+                # query.checkManualPago=jsonRequest['checkManualPago']
+                # query.checkCedula=jsonRequest['checkCedula']
+                # query.external_id=jsonRequest['external_id']
+                # query.created_at=jsonRequest['created_at']
+                # query.updated_at=jsonRequest['updated_at']
+                # query.state=jsonRequest['state']
+                # query.save()
             
             # Borramos SQS
             message.delete()
     except Exception as e:
         err={"error":'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel,err,logExcepcion)
+        print(err)
         return err
 
 
