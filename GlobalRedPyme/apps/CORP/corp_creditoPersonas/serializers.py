@@ -19,29 +19,29 @@ class CreditoPersonasSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(CreditoPersonasSerializer, self).to_representation(instance)
         # tomo el campo persona y convierto de OBJECTID a string
-        empresaIfis_id = data.pop('empresaIfis_id')
-        entidadFinanciera = Empresas.objects.filter(_id=ObjectId(empresaIfis_id), state=1).first()
-        data.update({"entidadFinanciera": entidadFinanciera.nombreComercial})
-        data['empresaIfis_id'] = str(empresaIfis_id)
-        empresaSerializer = EmpresasInfoBasicaSerializer(entidadFinanciera).data
-        data['imagen'] = empresaSerializer['imagen']
-        # Info empresa comercial
-        empresaComercial_id = data.pop('empresaComercial_id')
-        data['empresaComercial_id'] = str(empresaComercial_id)
-        if empresaComercial_id:
-            entidadComercial = Empresas.objects.filter(_id=ObjectId(empresaComercial_id), state=1).first()
-            data['rucComercial'] = entidadComercial.ruc
-            data['nombreComercial'] = entidadComercial.nombreComercial
-            data['correoCorp'] = entidadComercial.correo
-            data['telefono1'] = entidadComercial.telefono1
-            data['imagenComercial'] = EmpresasInfoBasicaSerializer(entidadComercial).data['imagen']
+        # empresaIfis_id = data.pop('empresaIfis_id')
+        # entidadFinanciera = Empresas.objects.filter(_id=ObjectId(empresaIfis_id), state=1).first()
+        # data.update({"entidadFinanciera": entidadFinanciera.nombreComercial})
+        # data['empresaIfis_id'] = str(empresaIfis_id)
+        # empresaSerializer = EmpresasInfoBasicaSerializer(entidadFinanciera).data
+        # data['imagen'] = empresaSerializer['imagen']
+        # # Info empresa comercial
+        # empresaComercial_id = data.pop('empresaComercial_id')
+        # data['empresaComercial_id'] = str(empresaComercial_id)
+        # if empresaComercial_id:
+        #     entidadComercial = Empresas.objects.filter(_id=ObjectId(empresaComercial_id), state=1).first()
+        #     data['rucComercial'] = entidadComercial.ruc
+        #     data['nombreComercial'] = entidadComercial.nombreComercial
+        #     data['correoCorp'] = entidadComercial.correo
+        #     data['telefono1'] = entidadComercial.telefono1
+        #     data['imagenComercial'] = EmpresasInfoBasicaSerializer(entidadComercial).data['imagen']
         # Informacion persona
-        persona = Personas.objects.filter(user_id=str(instance.user_id),state=1).first()
-        if persona is not None:
-            data.update({"nombres": persona.nombres})
-            data.update({"apellidos": persona.apellidos})
-            data.update({"whatsappPersona": persona.whatsapp})
-            data.update({"emailPersona": persona.email})
+        # persona = Personas.objects.filter(user_id=str(instance.user_id),state=1).first()
+        # if persona is not None:
+        #     data.update({"nombres": persona.nombres})
+        #     data.update({"apellidos": persona.apellidos})
+        #     data.update({"whatsappPersona": persona.whatsapp})
+        #     data.update({"emailPersona": persona.email})
         return data
 
 class CreditoPersonasPersonaSerializer(serializers.ModelSerializer):

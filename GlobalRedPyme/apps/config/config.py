@@ -1,6 +1,9 @@
 # environ init
 import os
 import environ
+# LIBRERIA FIREBASE
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 env = environ.Env()
 
@@ -54,6 +57,10 @@ if PRODUCTION:
     AWS_SECRET_ACCESS_KEY_TEXTRACT = env.str('AWS_SECRET_ACCESS_KEY_TEXTRACT')
     #CORS
     CORS_ALLOWED_ORIGINS = tuple(env.list('CORS_ALLOWED_ORIGINS'))
+    # FIREBASE
+    FIREBASE_CRED = credentials.Certificate('apps/config/serviceAccountKey.json')
+    firebase_admin.initialize_app(FIREBASE_CRED, {"databaseURL": 'grp-sanjose'})
+    FIREBASE_DB = firestore.client()
     #databases
     DATABASES = {
         'default': {
