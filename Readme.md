@@ -26,7 +26,7 @@ python manage.py runserver
 sudo docker build -t james46007/grp-backend-g-ifi:dev .
 ```
 
-```
+```shell
 docker buildx build --platform linux/amd64 -t james46007/grp-backend-g-ifi:dev .
 ```
 

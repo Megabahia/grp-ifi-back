@@ -151,8 +151,9 @@ def creditoPersonas_update(request, pk):
             if serializer.is_valid():
                 serializer.save()
                 createLog(logModel,serializer.data,logTransaccion)
-                # Publicar en la cola
-                publish(serializer.data)
+                if serializer.data['estado'] == 'Negado':
+                    # Publicar en la cola
+                    publish(serializer.data)
                 return Response(serializer.data)
             createLog(logModel,serializer.errors,logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
