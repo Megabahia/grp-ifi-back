@@ -58,7 +58,7 @@ if PRODUCTION:
     #CORS
     CORS_ALLOWED_ORIGINS = tuple(env.list('CORS_ALLOWED_ORIGINS'))
     # FIREBASE
-    FIREBASE_CRED = credentials.Certificate('apps/config/serviceAccountKey.json')
+    FIREBASE_CRED = credentials.Certificate(os.path.join(BASE_DIR, 'config/serviceAccountKey.json'))
     firebase_admin.initialize_app(FIREBASE_CRED, {"databaseURL": 'grp-sanjose'})
     FIREBASE_DB = firestore.client()
     #databases

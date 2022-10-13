@@ -105,6 +105,7 @@ INSTALLED_APPS = [
     'import_export',
     'drf_yasg',
     'django_crontab',
+    "django_cron",
 ]
 
 SWAGGER_SETTINGS = {
@@ -244,6 +245,6 @@ AWS_QUERYSTRING_AUTH = False
 
 CRONJOBS = [
     # La función temporizada se ejecuta cada minuto
-    ('*/1 * * * *', "apps.CORP.corp_pagos.cron_ifi.hi"),
-    ('*/1 * * * *', "apps.CORP.corp_creditoPersonas.consumer_ifi.get_queue_url"),
+    ('*/1 * * * *', 'apps.CORP.corp_pagos.cron_ifi.hi'),
+    ('*/1 * * * *', 'apps.CORP.corp_creditoPersonas.consumer_ifi.get_queue_url'),
 ]
