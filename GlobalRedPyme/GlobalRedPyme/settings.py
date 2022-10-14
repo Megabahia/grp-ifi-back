@@ -105,7 +105,6 @@ INSTALLED_APPS = [
     'import_export',
     'drf_yasg',
     'django_crontab',
-    "django_cron",
 ]
 
 SWAGGER_SETTINGS = {
