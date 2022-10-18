@@ -413,13 +413,12 @@ def enviarCodigoCorreo(codigo, monto, email):
                     <h1>Se acaba de generar el codigo de verificación de su cuenta</h1>
 
                     <p>USTED TIENE UN CREDITO PRE-APROBADO DE $ """ + monto + """, PARA QUE REALICE LA COMPRA EN www.credicompra.com, 
-                    Por favor ingrese a la plataforma www.credicompra.com y disfrute de su compra:
+                    Por favor ingrese a la plataforma www.credicompra.com y disfrute de su compra: <a href='www.credicompra.com'>Link</a>
                     </p>
 
-                    <a href='www.credicompra.com'>Link</a>
+                    <a href='""" + config.API_FRONT_END_BIGPUNTOS + """/pages/preApprovedCreditConsumer'>Link</a>
 
-                    Al ingresar por favor digitar el siguiente código: """ + codigo + """ en la siguiente pagina<br>
-                    <a href='""" + config.API_FRONT_END_BIGPUNTOS + """"/pages/preApprovedCreditConsumer'>Link</a>
+                    Al ingresar por favor digitar el siguiente código: """ + codigo + """ en la siguiente pagina<br>                    
 
                     Saludos,<br>
                     Equipo Global Red Pymes.<br>
