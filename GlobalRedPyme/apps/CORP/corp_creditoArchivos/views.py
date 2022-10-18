@@ -1,6 +1,6 @@
 from .models import PreAprobados
 from apps.CENTRAL.central_catalogo.models import Catalogo
-from apps.CORP.corp_creditoPersonas.models import CreditoPersonas
+from ..corp_creditoPersonas.models import CreditoPersonas
 from apps.PERSONAS.personas_personas.models import Personas
 from apps.CORP.corp_creditoArchivos.serializers import (
     CreditoArchivosSerializer
@@ -234,7 +234,7 @@ def uploadEXCEL_creditosPreaprobados(request, pk):
                 first = False
                 continue
             else:
-                if len(dato) == 18:
+                if len(dato) == 20:
                     resultadoInsertar = insertarDato_creditoPreaprobado(dato, archivo.empresa_financiera)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
@@ -305,7 +305,7 @@ def uploadEXCEL_creditosPreaprobados_empleados(request, pk):
                 first = False
                 continue
             else:
-                if len(dato) == 22:
+                if len(dato) == 25:
                     resultadoInsertar = insertarDato_creditoPreaprobado_empleado(dato, archivo.empresa_financiera)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
@@ -344,23 +344,27 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['montoDisponible'] = dato[2].replace('"', "") if dato[2] != "NULL" else None
         data['plazo'] = dato[3].replace('"', "") if dato[3] != "NULL" else None
         data['interes'] = dato[4].replace('"', "") if dato[4] != "NULL" else None
+        data['cuota'] = dato[5].replace('"', "") if dato[5] != "NULL" else None
+        data['tipoPersona'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
+        data['estadoCivil'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
         data['estado'] = 'PreAprobado'
         data['tipoCredito'] = 'PreAprobado'
         data['canal'] = 'PreAprobado'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
-        data['numeroIdentificacion'] = dato[5]
-        data['nombres'] = dato[8].replace('"', "") if dato[8] != "NULL" else None
-        data['apellidos'] = dato[9].replace('"', "") if dato[9] != "NULL" else None
+        data['numeroIdentificacion'] = dato[8]
+        data['nombres'] = dato[9].replace('"', "") if dato[9] != "NULL" else None
+        data['apellidos'] = dato[10].replace('"', "") if dato[10] != "NULL" else None
         data['nombresCompleto'] = data['nombres'] + ' ' + data['apellidos']
         data['empresaIfis_id'] = empresa_financiera
-        data['empresasAplican'] = dato[19]
+        data['empresasAplican'] = dato[20]
         data['created_at'] = str(timezone_now)
-        # inserto el dato con los campos requeridos
-        CreditoPersonas.objects.create(**data)
         # Genera el codigo
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
-        enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[15])
+        data['codigoPreaprobado'] = codigo
+        # inserto el dato con los campos requeridos
+        CreditoPersonas.objects.create(**data)
+        enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[16])
         publish({'codigo': codigo, 'cedula': data['numeroIdentificacion'], 'monto': data['monto']})
         return 'Dato insertado correctamente'
     except Exception as e:
@@ -377,25 +381,28 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['monto'] = dato[2].replace('"', "") if dato[2] != "NULL" else None
         data['plazo'] = dato[3].replace('"', "") if dato[3] != "NULL" else None
         data['interes'] = dato[4].replace('"', "") if dato[4] != "NULL" else None
+        data['cuota'] = dato[5].replace('"', "") if dato[5] != "NULL" else None
+        data['tipoPersona'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
+        data['estadoCivil'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
         data['estado'] = 'Nuevo'
         data['tipoCredito'] = 'Empleado-PreAprobado'
         data['canal'] = 'Empleado-PreAprobado'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
-        data['numeroIdentificacion'] = dato[7]
-        data['nombres'] = dato[8].replace('"', "") if dato[8] != "NULL" else None
-        data['apellidos'] = dato[9].replace('"', "") if dato[9] != "NULL" else None
+        data['numeroIdentificacion'] = dato[8]
+        data['nombres'] = dato[9].replace('"', "") if dato[9] != "NULL" else None
+        data['apellidos'] = dato[10].replace('"', "") if dato[10] != "NULL" else None
         data['nombresCompleto'] = data['nombres'] + ' ' + data['apellidos']
         data['empresaIfis_id'] = empresa_financiera
-        data['empresasAplican'] = dato[21]
+        data['empresasAplican'] = dato[22]
         data['created_at'] = str(timezone_now)
+        # Genera el codigo
+        codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
+        data['codigoPreaprobado'] = codigo
         # inserto el dato con los campos requeridos
         credito = CreditoPersonas.objects.create(**data)
         creditoSerializer = CreditoPersonasSerializer(credito, data=data, partial=True)
-        # Genera el codigo
-        codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
-        enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[15])
-        # publish({'codigo': codigo, 'cedula': data['numeroIdentificacion'], 'monto': data['monto']})
+        enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[16])
         if creditoSerializer.is_valid():
             publish_credit(creditoSerializer.data)
         return 'Dato insertado correctamente'

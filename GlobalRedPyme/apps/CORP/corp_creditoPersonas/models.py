@@ -71,6 +71,9 @@ class CreditoPersonas(models.Model):
     checkCedula = models.BooleanField(blank=True, null=True)
     external_id = models.CharField(max_length=255,blank=True, null=True)
     montoDisponible = models.FloatField(null=True, blank=True)
+    codigoPreaprobado = models.CharField(max_length=255,null=True, blank=True)
+    tipoPersona = models.CharField(max_length=255,null=True, blank=True)
+    estadoCivil = models.CharField(max_length=255,null=True, blank=True)
 
     user = jsonfield.JSONField()
     observacion = models.TextField(null=True, blank=True)
