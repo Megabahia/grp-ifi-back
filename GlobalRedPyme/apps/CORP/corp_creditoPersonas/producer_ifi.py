@@ -13,34 +13,56 @@ def publish(data):
         region_name=config.AWS_REGION_NAME,
     )
 
-    data.pop('reporteBuro')
-    data.pop('identificacion')
-    data.pop('papeletaVotacion')
-    data.pop('identificacionConyuge')
-    data.pop('papeletaVotacionConyuge')
-    data.pop('planillaLuzNegocio')
-    data.pop('planillaLuzDomicilio')
-    data.pop('facturas')
-    data.pop('matriculaVehiculo')
-    data.pop('impuestoPredial')
-    data.pop('buroCredito')
-    data.pop('evaluacionCrediticia')
-    data.pop('ruc')
-    data.pop('rolesPago')
-    data.pop('panillaIESS')
-    data.pop('mecanizadoIess')
-    data.pop('fotoCarnet')
-    data.pop('solicitudCredito')
-    data.pop('buroCreditoIfis')
-    data.pop('documentoAprobacion')
-    data.pop('pagare')
-    data.pop('contratosCuenta')
-    data.pop('tablaAmortizacion')
+    if 'reporteBuro' in data:
+        data.pop('reporteBuro')
+    if 'identificacion' in data:
+        data.pop('identificacion')
+    if 'papeletaVotacion' in data:
+        data.pop('papeletaVotacion')
+    if 'identificacionConyuge' in data:
+        data.pop('identificacionConyuge')
+    if 'papeletaVotacionConyuge' in data:
+        data.pop('papeletaVotacionConyuge')
+    if 'planillaLuzNegocio' in data:
+        data.pop('planillaLuzNegocio')
+    if 'planillaLuzDomicilio' in data:
+        data.pop('planillaLuzDomicilio')
+    if 'facturas' in data:
+        data.pop('facturas')
+    if 'matriculaVehiculo' in data:
+        data.pop('matriculaVehiculo')
+    if 'impuestoPredial' in data:
+        data.pop('impuestoPredial')
+    if 'buroCredito' in data:
+        data.pop('buroCredito')
+    if 'evaluacionCrediticia' in data:
+        data.pop('evaluacionCrediticia')
+    if 'ruc' in data:
+        data.pop('ruc')
+    if 'rolesPago' in data:
+        data.pop('rolesPago')
+    if 'panillaIESS' in data:
+        data.pop('panillaIESS')
+    if 'mecanizadoIess' in data:
+        data.pop('mecanizadoIess')
+    if 'fotoCarnet' in data:
+        data.pop('fotoCarnet')
+    if 'solicitudCredito' in data:
+        data.pop('solicitudCredito')
+    if 'buroCreditoIfis' in data:
+        data.pop('buroCreditoIfis')
+    if 'documentoAprobacion' in data:
+        data.pop('documentoAprobacion')
+    if 'pagare' in data:
+        data.pop('pagare')
+    if 'contratosCuenta' in data:
+        data.pop('contratosCuenta')
+    if 'tablaAmortizacion' in data:
+        data.pop('tablaAmortizacion')
 
     response = snsClient.publish(
         TopicArn=topicArn,
         Message=json.dumps(data),
         Subject='PURCHASE',
-        MessageAttributes={"TransactionType":{"DataType":"String","StringValue":"PURCHASE"}}
     )
     print(response['ResponseMetadata']['HTTPStatusCode'])

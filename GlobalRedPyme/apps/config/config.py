@@ -23,6 +23,7 @@ endpointEmailReseteoPassword="/grp/reseteoPassword/"
 if PRODUCTION:
     # URL BACK END
     API_BACK_END = env.str('API_BACK_END')
+    API_FRONT_END_BIGPUNTOS = env.str('API_FRONT_END_BIGPUNTOS')
     #URL FRONT END
     API_FRONT_END=env.str('API_FRONT_END')
     API_FRONT_END_CENTRAL=env.str('API_FRONT_END_CENTRAL')
