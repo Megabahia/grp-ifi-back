@@ -234,7 +234,7 @@ def uploadEXCEL_creditosPreaprobados(request, pk):
                 first = False
                 continue
             else:
-                if len(dato) == 20:
+                if len(dato) == 21:
                     resultadoInsertar = insertarDato_creditoPreaprobado(dato, archivo.empresa_financiera)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
@@ -305,7 +305,7 @@ def uploadEXCEL_creditosPreaprobados_empleados(request, pk):
                 first = False
                 continue
             else:
-                if len(dato) == 25:
+                if len(dato) == 23:
                     resultadoInsertar = insertarDato_creditoPreaprobado_empleado(dato, archivo.empresa_financiera)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
