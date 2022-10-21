@@ -347,9 +347,9 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['cuota'] = dato[5].replace('"', "") if dato[5] != "NULL" else None
         data['tipoPersona'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
         data['estadoCivil'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
-        data['estado'] = 'PreAprobado'
-        data['tipoCredito'] = 'PreAprobado'
-        data['canal'] = 'PreAprobado'
+        data['estado'] = 'Nuevo'
+        data['tipoCredito'] = 'Negocio-PreAprobado'
+        data['canal'] = 'Negocio-PreAprobado'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
         data['numeroIdentificacion'] = dato[8]
@@ -363,9 +363,11 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
         data['codigoPreaprobado'] = codigo
         # inserto el dato con los campos requeridos
-        CreditoPersonas.objects.create(**data)
+        credito = CreditoPersonas.objects.create(**data)
+        creditoSerializer = CreditoPersonasSerializer(credito, data=data, partial=True)
         enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[16])
-        publish({'codigo': codigo, 'cedula': data['numeroIdentificacion'], 'monto': data['monto']})
+        if creditoSerializer.is_valid():
+            publish_credit(creditoSerializer.data)
         return 'Dato insertado correctamente'
     except Exception as e:
         return str(e)
