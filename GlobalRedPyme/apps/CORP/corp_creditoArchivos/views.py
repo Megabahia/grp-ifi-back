@@ -364,6 +364,8 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['codigoPreaprobado'] = codigo
         # inserto el dato con los campos requeridos
         credito = CreditoPersonas.objects.create(**data)
+        credito.external_id = credito._id
+        credito.save()
         creditoSerializer = CreditoPersonasSerializer(credito, data=data, partial=True)
         enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[16])
         if creditoSerializer.is_valid():
@@ -403,6 +405,8 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['codigoPreaprobado'] = codigo
         # inserto el dato con los campos requeridos
         credito = CreditoPersonas.objects.create(**data)
+        credito.external_id = credito._id
+        credito.save()
         creditoSerializer = CreditoPersonasSerializer(credito, data=data, partial=True)
         enviarCodigoCorreo(codigo, monto=data['monto'], email=dato[16])
         if creditoSerializer.is_valid():

@@ -9,7 +9,7 @@ from apps.CORP.corp_creditoPersonas.serializers import (
 # Publicar en sns
 from apps.CORP.corp_creditoPersonas.producer_ifi import publish
 # Consumir en sqs
-from apps.CORP.corp_creditoPersonas.consumer_ifi import get_queue_url
+from .consumer_ifi import get_queue_url
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes

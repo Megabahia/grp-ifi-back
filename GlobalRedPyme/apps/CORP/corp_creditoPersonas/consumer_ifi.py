@@ -19,6 +19,7 @@ logTransaccion = datosTipoLogAux['transaccion']
 logExcepcion = datosTipoLogAux['excepcion']
 
 def get_queue_url():
+    print('cron')
     logModel = {
         'endPoint': logApi + 'listOne/',
         'modulo': logModulo,
@@ -45,22 +46,33 @@ def get_queue_url():
             body = json.loads(message.body)
             jsonRequest = json.loads(body['Message'])
             _idCredidPerson = jsonRequest.pop('_id')
-            jsonRequest['external_id'] = _idCredidPerson
             # Por el momento crea los nuevos registros que llegan sqs
             query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
             credito = ''
             if query is None:
                 # Quitar los campos que no estan en el modelo de credito persona
-                jsonRequest.pop('whatsappPersona')
-                jsonRequest.pop('emailPersona')
-                jsonRequest['estado'] = 'Nuevo'
-                print('antes de guardar')
-                credito = CreditoPersonas.objects.create(**jsonRequest)
-                print('se guardo')
+                query = CreditoPersonas.objects.filter(_id=ObjectId(jsonRequest['external_id']), state=1).first()
+                if query is not None:
+                    print('antes de actualizar desde bigpuntos')
+                    if 'entidadFinanciera' in jsonRequest:
+                        jsonRequest.pop('entidadFinanciera')
+                    CreditoPersonas.objects.filter(_id=ObjectId(jsonRequest['external_id'])).update(**jsonRequest)
+                    credito = query
+                    print('se guardo')
+                else:
+                    if 'whatsappPersona' in jsonRequest:
+                        jsonRequest.pop('whatsappPersona')
+                    if 'emailPersona' in jsonRequest:
+                        jsonRequest.pop('emailPersona')
+                    jsonRequest['external_id'] = _idCredidPerson
+                    jsonRequest['estado'] = 'Nuevo'
+                    print('antes de guardar')
+                    credito = CreditoPersonas.objects.create(**jsonRequest)
+                    print('se guardo')
             else:
                 # Quitar los campos que no estan en el modelo de credito persona
-                jsonRequest.pop('whatsappPersona')
-                jsonRequest.pop('emailPersona')
+
+                jsonRequest['external_id'] = _idCredidPerson
                 jsonRequest['estado'] = 'Nuevo'
 
                 print('antes de actualizar')
