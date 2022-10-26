@@ -77,6 +77,13 @@ class CreditoPersonas(models.Model):
 
     user = jsonfield.JSONField()
     observacion = models.TextField(null=True, blank=True)
+    ingresosMensuales = models.TextField(null=True, blank=True)
+    egresosMensuales = models.TextField(null=True, blank=True)
+    patrimonio = models.TextField(null=True, blank=True)
+    fechaInicioActividades = models.TextField(null=True, blank=True)
+    razonSocial = models.TextField(null=True, blank=True)
+    rucEmpresa = models.TextField(null=True, blank=True)
+    email = models.TextField(null=True, blank=True)
 
     checks = jsonfield.JSONField()
     
