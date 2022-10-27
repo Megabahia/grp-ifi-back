@@ -18,7 +18,7 @@ class CatalogoSerializer(serializers.ModelSerializer):
 class CatalogoHijoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Catalogo
-       	fields = ['_id','nombre','valor']
+       	fields = ['_id','nombre','valor','config']
         read_only_fields = ['_id']
 
 class CatalogoListaSerializer(serializers.ModelSerializer):
