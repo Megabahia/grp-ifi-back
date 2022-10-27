@@ -9,6 +9,7 @@ from .views import (
     uploadEXCEL_creditosPreaprobados_empleados,
     creditoPersonas_listOne_persona,
     creditoPersonas_lecturaArchivos,
+    creditoPersonas_creditoPreaprobado_codigo,
     prueba,
 )
 
@@ -25,5 +26,7 @@ urlpatterns = [
          name="uploadEXCEL_creditosPreaprobados_empleados"),
     path('listOne/persona/<str:pk>', creditoPersonas_listOne_persona, name="creditoPersonas_listOne_persona"),
     path('lecturaArchivos/<str:pk>', creditoPersonas_lecturaArchivos, name="creditoPersonas_lecturaArchivos"),
+    path('creditoPreaprobado/codigo', creditoPersonas_creditoPreaprobado_codigo,
+         name="creditoPersonas_creditoPreaprobado_codigo"),
     path('prueba', prueba, name="prueba"),
 ]

@@ -45,6 +45,8 @@ class CreditoPersonas(models.Model):
     pagare = models.FileField(blank=True,null=True,upload_to=upload_path)
     contratosCuenta = models.FileField(blank=True,null=True,upload_to=upload_path)
     tablaAmortizacion = models.FileField(blank=True,null=True,upload_to=upload_path)
+    facturasVentas2meses = models.FileField(blank=True, null=True, upload_to=upload_path)
+    facturasVentasCertificado = models.FileField(blank=True, null=True, upload_to=upload_path)
     codigoClienteCreado = models.CharField(max_length=255,null=True, blank=True)
     codigoCuentaCreada = models.CharField(max_length=255,null=True, blank=True)
     calificacionBuroIfis = models.CharField(max_length=255,null=True, blank=True)
