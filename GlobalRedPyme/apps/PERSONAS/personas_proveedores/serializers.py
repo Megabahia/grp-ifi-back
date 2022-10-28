@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
 from .models import (
-    RucPersonas
+    Proveedores
 )
 
 
-class RucPersonasSerializer(serializers.ModelSerializer):
+class ProveedoresSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RucPersonas
+        model = Proveedores
         fields = '__all__'
         read_only_fields = ['_id']

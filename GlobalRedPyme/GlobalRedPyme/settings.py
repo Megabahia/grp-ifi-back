@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'apps.PERSONAS.personas_personas',
     'apps.PERSONAS.personas_historialLaboral',
     'apps.PERSONAS.personas_rucPersonas',
+    'apps.PERSONAS.personas_proveedores',
     #apps central CENTRAL
     'apps.CENTRAL.central_logs',
     'apps.CENTRAL.central_roles',

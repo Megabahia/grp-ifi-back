@@ -3,7 +3,7 @@ class GRPPERSONASRouter:
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'personas_personas','personas_historialLaboral','personas_rucPersonas'}
+    route_app_labels = {'personas_personas','personas_historialLaboral','personas_rucPersonas', 'personas_proveedores'}
 
 
     def db_for_read(self, model, **hints):

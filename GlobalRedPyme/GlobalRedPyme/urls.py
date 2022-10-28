@@ -40,6 +40,7 @@ urlpatterns = [
     path('personas/personas/', include(('apps.PERSONAS.personas_personas.urls', 'personas'), namespace='personas')),
     path('personas/historialLaboral/', include(('apps.PERSONAS.personas_historialLaboral.urls', 'historialLaboral'), namespace='historialLaboral')),
     path('personas/rucPersonas/', include(('apps.PERSONAS.personas_rucPersonas.urls', 'rucPersonas'), namespace='rucPersonas')),
+    path('personas/proveedores/', include(('apps.PERSONAS.personas_proveedores.urls', 'personas_proveedores'), namespace='personas_proveedores')),
     # CORP
     path('corp/cobrarSupermonedas/', include(('apps.CORP.corp_cobrarSupermonedas.urls', 'cobrarSupermonedas'), namespace='cobrarSupermonedas')),
     path('corp/autorizacion/', include(('apps.CORP.corp_autorizaciones.urls', 'autorizacion'), namespace='autorizacion')),
