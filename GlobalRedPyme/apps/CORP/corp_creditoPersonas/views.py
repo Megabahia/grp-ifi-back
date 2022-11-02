@@ -79,6 +79,9 @@ def creditoPersonas_create(request):
             if serializer.is_valid():
                 serializer.save()
                 createLog(logModel, serializer.data, logTransaccion)
+                if serializer.data['estado'] == 'Nuevo' and serializer.data['tipoCredito'] == 'Pymes-Normales':
+                    # Publicar en la cola
+                    publish(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

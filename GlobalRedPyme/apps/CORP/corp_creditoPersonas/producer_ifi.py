@@ -59,6 +59,9 @@ def publish(data):
         data.pop('contratosCuenta')
     if 'tablaAmortizacion' in data:
         data.pop('tablaAmortizacion')
+    if 'external_id' in data:
+        if data['external_id'] is None:
+            data['external_id'] = data['_id']
 
     response = snsClient.publish(
         TopicArn=topicArn,

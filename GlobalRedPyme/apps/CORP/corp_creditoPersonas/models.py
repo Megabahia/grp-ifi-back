@@ -88,7 +88,10 @@ class CreditoPersonas(models.Model):
     email = models.TextField(null=True, blank=True)
 
     checks = jsonfield.JSONField()
-    
+    empresaInfo = jsonfield.JSONField()
+    proveedor = models.CharField(max_length=255,null=True, blank=True)
+    numeroFacturaproveedor = models.FileField(blank=True,null=True,upload_to=upload_path)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     state = models.SmallIntegerField(default=1)

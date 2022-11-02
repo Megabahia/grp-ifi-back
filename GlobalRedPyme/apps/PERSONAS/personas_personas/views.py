@@ -388,3 +388,42 @@ def personas_listOne_cedula(request):
             createLog(logModel,err,logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def personas_update_empresa(request, pk):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi+'infoEmpresa/',
+        'modulo':logModulo,
+        'tipo' : logExcepcion,
+        'accion' : 'ESCRIBIR',
+        'fechaInicio' : str(timezone_now),
+        'dataEnviada' : '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida' : '{}'
+    }
+    try:
+        try:
+            logModel['dataEnviada'] = str(request.data)
+            query = Personas.objects.filter(user_id=pk, state=1).first()
+        except Personas.DoesNotExist:
+            errorNoExiste={'error':'No existe'}
+            createLog(logModel,errorNoExiste,logExcepcion)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if request.method == 'POST':
+            now = timezone.localtime(timezone.now())
+            request.data['updated_at'] = str(now)
+            if 'created_at' in request.data:
+                request.data.pop('created_at')
+            serializer = PersonasUpdateSinImagenSerializer(query, data=request.data,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                createLog(logModel,serializer.data,logTransaccion)
+                return Response(serializer.data)
+            createLog(logModel,serializer.errors,logExcepcion)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        err={"error":'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel,err,logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+

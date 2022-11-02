@@ -2,18 +2,19 @@ from rest_framework import serializers
 # ObjectId
 from bson import ObjectId
 
-from apps.CORP.corp_creditoPersonas.models import (
+from .models import (
     CreditoPersonas,
 )
 
-from apps.CORP.corp_empresas.models import Empresas
+from ..corp_empresas.models import Empresas
 from apps.PERSONAS.personas_personas.models import Personas
-from apps.CORP.corp_empresas.serializers import EmpresasInfoBasicaSerializer
+from ..corp_empresas.serializers import EmpresasInfoBasicaSerializer
+
 
 class CreditoPersonasSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditoPersonas
-       	fields = '__all__'
+        fields = '__all__'
         read_only_fields = ['_id']
 
     def to_representation(self, instance):
@@ -44,10 +45,11 @@ class CreditoPersonasSerializer(serializers.ModelSerializer):
         #     data.update({"emailPersona": persona.email})
         return data
 
+
 class CreditoPersonasPersonaSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditoPersonas
-       	fields = ['_id','monto','plazo','user_id','empresaIfis_id']
+        fields = ['_id', 'monto', 'plazo', 'user_id', 'empresaIfis_id']
         read_only_fields = ['_id']
 
     def to_representation(self, instance):
@@ -60,7 +62,7 @@ class CreditoPersonasPersonaSerializer(serializers.ModelSerializer):
         empresaSerializer = EmpresasInfoBasicaSerializer(entidadFinanciera).data
         data['imagen'] = empresaSerializer['imagen']
         # Informacion persona
-        persona = Personas.objects.filter(user_id=str(instance.user_id),state=1).first()
+        persona = Personas.objects.filter(user_id=str(instance.user_id), state=1).first()
         if persona is not None:
             data.update({"identificacion": persona.identificacion})
             data.update({"nombres": persona.nombres})

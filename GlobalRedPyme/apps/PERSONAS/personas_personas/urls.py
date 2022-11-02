@@ -1,5 +1,5 @@
 from django.urls import path,include
-from apps.PERSONAS.personas_personas.views import(
+from .views import(
 	personas_create,
 	personas_listOne,
 	personas_update,
@@ -8,6 +8,7 @@ from apps.PERSONAS.personas_personas.views import(
 	personas_validarCodigo,
 	personas_update_sin_imagen,
 	personas_listOne_cedula,
+	personas_update_empresa,
 )
 app_name = 'personas_personas'
 
@@ -20,5 +21,6 @@ urlpatterns = [
 	path('update/imagen/<str:pk>', personas_imagenUpdate, name="personas_imagenUpdate"),
 	path('validarCodigo/', personas_validarCodigo, name="personas_validarCodigo"),
 	path('listOne/cedula/', personas_listOne_cedula, name="personas_listOne_cedula"),
+	path('infoEmpresa/<str:pk>', personas_update_empresa, name="personas_update_empresa"),
 ]
 
