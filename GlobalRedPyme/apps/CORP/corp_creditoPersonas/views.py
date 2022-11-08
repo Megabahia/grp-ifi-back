@@ -1,11 +1,13 @@
 from apps.CENTRAL.central_catalogo.models import Catalogo
-from .models import CreditoPersonas
+from .models import CreditoPersonas, CodigoCredito
 from apps.PERSONAS.personas_personas.models import Personas
 from apps.CORP.corp_empresas.models import Empresas
 from apps.PERSONAS.personas_personas.serializers import PersonasSearchSerializer
 from .serializers import (
-    CreditoPersonasSerializer, CreditoPersonasPersonaSerializer
+    CreditoPersonasSerializer, CreditoPersonasPersonaSerializer, CodigoCreditoSerializer
 )
+# Enviar Correo
+from apps.config.util import sendEmail
 # Publicar en sns
 from .producer_ifi import publish
 # Consumir en sqs
@@ -662,3 +664,104 @@ def prueba(request):
     get_queue_url()
     err = {"error": "No existe"}
     return Response(err, status=status.HTTP_404_NOT_FOUND)
+
+
+def enviarCodigoCorreoMicroCredito(codigo, email):
+    subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = codigo
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>Se acaba de generar el codigo de seguridad para consultar los creditos</h1><br>
+                        <p>Tu código para acceder a consultar los creditos aprobados es: {codigo}</p><br>
+                        Saludos,<br>
+                        Equipo Global Red Pymes.<br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
+
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def creditoPersonas_codigo_creditoAprobado(request):
+    nowDate = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'generar/codigo/creditoAprobado/',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'BORRAR',
+        'fechaInicio': str(nowDate),
+        'dataEnviada': '{}',
+        'fechaFin': str(nowDate),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            query = CreditoPersonas.objects.filter(numeroIdentificacion=request.data['numeroIdentificacion'], state=1,
+                                                   estado='Aprobado').order_by('-created_at').first()
+        except CreditoPersonas.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'POST':
+            # Genera el codigo
+            longitud_codigo = Catalogo.objects.filter(tipo='CONFIG_TWILIO', nombre='LONGITUD_CODIGO',
+                                                      state=1).first().valor
+            codigo = (''.join(random.choice(string.digits) for _ in range(int(longitud_codigo))))
+            enviarCodigoCorreoMicroCredito(codigo, query.email)
+            serializer = CodigoCreditoSerializer(data={'credito_id': str(query._id), 'codigo': codigo})
+            if serializer.is_valid():
+                serializer.save()
+                createLog(logModel, serializer.data, logTransaccion)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            createLog(logModel, serializer.errors, logExcepcion)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creditoPersonas_validar_codigo_creditoAprobado(request):
+    nowDate = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'validar/codigo/creditoAprobado',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'BORRAR',
+        'fechaInicio': str(nowDate),
+        'dataEnviada': '{}',
+        'fechaFin': str(nowDate),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            query = CodigoCredito.objects.filter(credito_id=request.data['credito_id'], state=1,
+                                                 codigo=request.data['codigo']).first()
+        except CodigoCredito.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'POST':
+            tiempo = Catalogo.objects.filter(tipo='CONFIG_DURACION', nombre='DURACION_CODIGO', state=1).first().valor
+            duracion = query.created_at + relativedelta(minutes=int(tiempo))
+            if duracion > timezone.now():
+                credito = CreditoPersonas.objects.get(_id=ObjectId(query.credito_id))
+                print(credito)
+                serializer = CreditoPersonasSerializer(credito)
+                createLog(logModel, serializer.data, logTransaccion)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                serializer = {'mensaje': 'No existe'}
+                createLog(logModel, serializer, logExcepcion)
+                return Response(serializer, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)

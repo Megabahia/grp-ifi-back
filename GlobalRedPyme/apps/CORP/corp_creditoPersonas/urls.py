@@ -10,6 +10,8 @@ from .views import (
     creditoPersonas_listOne_persona,
     creditoPersonas_lecturaArchivos,
     creditoPersonas_creditoPreaprobado_codigo,
+    creditoPersonas_codigo_creditoAprobado,
+    creditoPersonas_validar_codigo_creditoAprobado,
     prueba,
 )
 
@@ -28,5 +30,9 @@ urlpatterns = [
     path('lecturaArchivos/<str:pk>', creditoPersonas_lecturaArchivos, name="creditoPersonas_lecturaArchivos"),
     path('creditoPreaprobado/codigo', creditoPersonas_creditoPreaprobado_codigo,
          name="creditoPersonas_creditoPreaprobado_codigo"),
+    path('generar/codigo/creditoAprobado', creditoPersonas_codigo_creditoAprobado,
+         name="creditoPersonas_codigo_creditoAprobado"),
+    path('validar/codigo/creditoAprobado', creditoPersonas_validar_codigo_creditoAprobado,
+         name="creditoPersonas_validar_codigo_creditoAprobado"),
     path('prueba', prueba, name="prueba"),
 ]

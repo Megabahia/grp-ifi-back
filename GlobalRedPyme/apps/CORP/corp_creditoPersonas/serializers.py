@@ -4,6 +4,7 @@ from bson import ObjectId
 
 from .models import (
     CreditoPersonas,
+    CodigoCredito,
 )
 
 from ..corp_empresas.models import Empresas
@@ -74,3 +75,10 @@ class CreditoPersonasPersonaSerializer(serializers.ModelSerializer):
             data.update({"whatsapp": persona.whatsapp})
             data.update({"email": persona.email})
         return data
+
+
+class CodigoCreditoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CodigoCredito
+        fields = '__all__'
+        read_only_fields = ['_id']
