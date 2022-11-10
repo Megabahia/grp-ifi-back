@@ -1,4 +1,4 @@
-from .models import PreAprobados
+from .models import PreAprobados, ArchivosFirmados
 from apps.CENTRAL.central_catalogo.models import Catalogo
 from ..corp_creditoPersonas.models import CreditoPersonas
 from .serializers import (
@@ -606,3 +606,35 @@ def creditoArchivos_subir_documentosFirmados_create(request):
             err = {"error": 'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creditoArchivos_ver_documentosFirmados_list(request):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'ver/documentosFirmados',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            query = ArchivosFirmados.objects.get(numeroIdentificacion=request.data['numeroIdentificacion'], state=1)
+        except ArchivosFirmados.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'POST':
+            serializer = ArchivosFirmadosSerializer(query)
+            createLog(logModel, serializer.data, logTransaccion)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)

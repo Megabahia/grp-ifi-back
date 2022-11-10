@@ -3,9 +3,8 @@ from .views import (
     factura_list, factura_create, factura_findOne, factura_list_latest, factura_update,
     factura_findOne_credito, factura_generar_codigos_envios,
     factura_create_fisica,
+    factura_list_facturaFisica,
 )
-
-from rest_framework.authtoken.views import obtain_auth_token
 
 app_name = 'facturas'
 
@@ -20,4 +19,5 @@ urlpatterns = [
     path('generar/habilitantes/credito/', factura_generar_codigos_envios, name="factura_generar_codigos_envios"),
     # Factura Fisica
     path('create/factura/', factura_create_fisica, name="factura_create_fisica"),
+    path('list/factura/', factura_list_facturaFisica, name="factura_list_facturaFisica"),
 ]
