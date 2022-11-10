@@ -712,7 +712,8 @@ def creditoPersonas_codigo_creditoAprobado(request):
                                                       state=1).first().valor
             codigo = (''.join(random.choice(string.digits) for _ in range(int(longitud_codigo))))
             enviarCodigoCorreoMicroCredito(codigo, query.email)
-            serializer = CodigoCreditoSerializer(data={'credito_id': str(query._id), 'codigo': codigo})
+            serializer = CodigoCreditoSerializer(data={'credito_id': str(query._id), 'codigo': codigo,
+                                                       'numeroIdentificacion': request.data['numeroIdentificacion']})
             if serializer.is_valid():
                 serializer.save()
                 createLog(logModel, serializer.data, logTransaccion)
@@ -741,7 +742,7 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
     }
     try:
         try:
-            query = CodigoCredito.objects.filter(credito_id=request.data['credito_id'], state=1,
+            query = CodigoCredito.objects.filter(numeroIdentificacion=request.data['numeroIdentificacion'], state=1,
                                                  codigo=request.data['codigo']).first()
         except CodigoCredito.DoesNotExist:
             err = {"error": "No existe"}

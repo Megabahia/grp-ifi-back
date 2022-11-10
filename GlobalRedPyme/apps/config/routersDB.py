@@ -3,8 +3,8 @@ class GRPPERSONASRouter:
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'personas_personas','personas_historialLaboral','personas_rucPersonas', 'personas_proveedores'}
-
+    route_app_labels = {'personas_personas', 'personas_historialLaboral', 'personas_rucPersonas',
+                        'personas_proveedores'}
 
     def db_for_read(self, model, **hints):
         """
@@ -28,10 +28,10 @@ class GRPPERSONASRouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -43,13 +43,13 @@ class GRPPERSONASRouter:
             return db == 'grp_g_ifi_personas_db'
         return None
 
+
 class GRPCORERouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
     route_app_labels = {'core_monedas'}
-
 
     def db_for_read(self, model, **hints):
         """
@@ -73,10 +73,10 @@ class GRPCORERouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -88,14 +88,15 @@ class GRPCORERouter:
             return db == 'grp_g_ifi_core_db'
         return None
 
+
 class GRPCORPRouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'corp_cobrarSupermonedas','corp_autorizaciones','corp_empresas','corp_movimientoCobros',
-    'corp_pagos','corp_creditoPersonas','corp_creditoPreaprobados','corp_notasPedidos','corp_monedasEmpresa','corp_creditoArchivos'}
-
+    route_app_labels = {'corp_cobrarSupermonedas', 'corp_autorizaciones', 'corp_empresas', 'corp_movimientoCobros',
+                        'corp_pagos', 'corp_creditoPersonas', 'corp_creditoPreaprobados', 'corp_notasPedidos',
+                        'corp_monedasEmpresa', 'corp_creditoArchivos', 'corp_envios'}
 
     def db_for_read(self, model, **hints):
         """
@@ -119,10 +120,10 @@ class GRPCORPRouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -134,13 +135,13 @@ class GRPCORPRouter:
             return db == 'grp_g_ifi_corp_db'
         return None
 
+
 class MDMRouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'mdm_clientes','mdm_facturas','mdm_negocios','mdm_prospectosClientes'}
-
+    route_app_labels = {'mdm_clientes', 'mdm_facturas', 'mdm_negocios', 'mdm_prospectosClientes'}
 
     def db_for_read(self, model, **hints):
         """
@@ -164,10 +165,10 @@ class MDMRouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -179,12 +180,14 @@ class MDMRouter:
             return db == 'grp_g_ifi_mdm_db'
         return None
 
+
 class MDPRouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'mdp_parametrizaciones','mdp_categorias','mdp_productos','mdp_fichaTecnicaProductos','mdp_subCategorias'}
+    route_app_labels = {'mdp_parametrizaciones', 'mdp_categorias', 'mdp_productos', 'mdp_fichaTecnicaProductos',
+                        'mdp_subCategorias'}
 
     def db_for_read(self, model, **hints):
         """
@@ -208,10 +211,10 @@ class MDPRouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -223,12 +226,14 @@ class MDPRouter:
             return db == 'grp_g_ifi_mdp_db'
         return None
 
+
 class MDORouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'mdo_parametrizaciones','mdo_generarOferta','mdo_prediccionCrosseling','mdo_prediccionProductosNuevos','mdo_prediccionRefil'}
+    route_app_labels = {'mdo_parametrizaciones', 'mdo_generarOferta', 'mdo_prediccionCrosseling',
+                        'mdo_prediccionProductosNuevos', 'mdo_prediccionRefil'}
 
     def db_for_read(self, model, **hints):
         """
@@ -252,10 +257,10 @@ class MDORouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -267,12 +272,13 @@ class MDORouter:
             return db == 'grp_g_ifi_mdo_db'
         return None
 
+
 class GDORouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'gdo_parametrizaciones','gdo_gestionOferta'}
+    route_app_labels = {'gdo_parametrizaciones', 'gdo_gestionOferta'}
 
     def db_for_read(self, model, **hints):
         """
@@ -296,10 +302,10 @@ class GDORouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -311,12 +317,13 @@ class GDORouter:
             return db == 'grp_g_ifi_gdo_db'
         return None
 
+
 class GDERouter:
     """
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'gde_parametrizaciones','gde_gestionEntrega'}
+    route_app_labels = {'gde_parametrizaciones', 'gde_gestionEntrega'}
 
     def db_for_read(self, model, **hints):
         """
@@ -340,10 +347,10 @@ class GDERouter:
         involved.
         """
         if (
-            obj1._meta.app_label in self.route_app_labels or
-            obj2._meta.app_label in self.route_app_labels
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
         ):
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):

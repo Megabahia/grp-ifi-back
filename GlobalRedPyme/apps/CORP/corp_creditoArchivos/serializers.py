@@ -2,16 +2,18 @@ from rest_framework import serializers
 # ObjectId
 from bson import ObjectId
 
-from apps.CORP.corp_creditoArchivos.models import (
+from .models import (
     PreAprobados,
+    ArchivosFirmados,
 )
 
-from apps.CORP.corp_empresas.models import Empresas 
+from apps.CORP.corp_empresas.models import Empresas
+
 
 class CreditoArchivosSerializer(serializers.ModelSerializer):
     class Meta:
         model = PreAprobados
-       	fields = '__all__'
+        fields = '__all__'
         read_only_fields = ['_id']
 
     def to_representation(self, instance):
@@ -26,3 +28,9 @@ class CreditoArchivosSerializer(serializers.ModelSerializer):
         if entidadComercial:
             data['empresa_comercial'] = entidadComercial.nombreComercial
         return data
+
+
+class ArchivosFirmadosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArchivosFirmados
+        fields = '__all__'

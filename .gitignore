@@ -36,6 +36,8 @@ GlobalRedPyme/apps/CORP/corp_empresas/migrations/__pycache__/
 GlobalRedPyme/apps/CORP/corp_cobrarSupermonedas/__pycache__/
 GlobalRedPyme/apps/CORP/corp_cobrarSupermonedas/migrations/__pycache__/
 GlobalRedPyme/apps/CORP/corp_monedasEmpresa/__pycache__/
+GlobalRedPyme/apps/CORP/corp_envios/migrations/__pycache__/
+GlobalRedPyme/apps/CORP/corp_envios/__pycache__/
 GlobalRedPyme/apps/CORP/corp_monedasEmpresa/migrations/__pycache__/
 GlobalRedPyme/apps/CORP/corp_autorizaciones/__pycache__/
 GlobalRedPyme/apps/CORP/corp_autorizaciones/migrations/__pycache__/

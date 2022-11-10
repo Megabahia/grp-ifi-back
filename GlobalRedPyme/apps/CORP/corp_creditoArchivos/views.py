@@ -1,9 +1,9 @@
 from .models import PreAprobados
 from apps.CENTRAL.central_catalogo.models import Catalogo
 from ..corp_creditoPersonas.models import CreditoPersonas
-from apps.PERSONAS.personas_personas.models import Personas
-from apps.CORP.corp_creditoArchivos.serializers import (
-    CreditoArchivosSerializer
+from .serializers import (
+    CreditoArchivosSerializer,
+    ArchivosFirmadosSerializer,
 )
 from ..corp_creditoPersonas.serializers import CreditoPersonasSerializer
 from rest_framework import status
@@ -571,3 +571,38 @@ def enviarCodigoCorreoMicroCredito(razonSocial, codigo, monto, email):
                 </html>
                 """
     sendEmail(subject, txt_content, from_email, to, html_content)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creditoArchivos_subir_documentosFirmados_create(request):
+    request.POST._mutable = True
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'subir/documentosFirmados',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'CREAR',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    if request.method == 'POST':
+        try:
+            logModel['dataEnviada'] = str(request.data)
+            request.data['created_at'] = str(timezone_now)
+            if 'updated_at' in request.data:
+                request.data.pop('updated_at')
+
+            serializer = ArchivosFirmadosSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                createLog(logModel, serializer.data, logTransaccion)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            createLog(logModel, serializer.errors, logExcepcion)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
