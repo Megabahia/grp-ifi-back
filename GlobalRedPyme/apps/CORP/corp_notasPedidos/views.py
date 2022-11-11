@@ -250,9 +250,8 @@ def factura_update(request, pk):
         createLog(logModel, err, logExcepcion)
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
-    # ENCONTRAR UNO
 
-
+# ENCONTRAR UNO
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def factura_findOne_credito(request, pk):
@@ -410,9 +409,6 @@ def factura_create_fisica(request):
             serializer = FacturasFisicasSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                credito = CreditoPersonas.objects.filter(_id=ObjectId(request.data['credito_id'])).first()
-                credito.montoDisponible = credito.montoDisponible - float(request.data['precio'])
-                credito.save()
                 createLog(logModel, serializer.data, logTransaccion)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             createLog(logModel, serializer.errors, logExcepcion)
@@ -421,6 +417,83 @@ def factura_create_fisica(request):
             err = {"error": 'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def factura_update_fisica(request, pk):
+    request.POST._mutable = True
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'update/factura/' + pk,
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'ESCRIBIR',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            logModel['dataEnviada'] = str(request.data)
+            query = FacturasFisicas.objects.get(pk=ObjectId(pk), state=1)
+        except FacturasFisicas.DoesNotExist:
+            errorNoExiste = {'error': 'No existe'}
+            createLog(logModel, errorNoExiste, logExcepcion)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if request.method == 'POST':
+            now = timezone.localtime(timezone.now())
+            request.data['updated_at'] = str(now)
+            if 'created_at' in request.data:
+                request.data.pop('created_at')
+
+            serializer = FacturasFisicasSerializer(query, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                credito = CreditoPersonas.objects.filter(_id=ObjectId(request.data['credito_id'])).first()
+                credito.montoDisponible = credito.montoDisponible - float(request.data['precio'])
+                credito.save()
+                createLog(logModel, serializer.data, logTransaccion)
+                return Response(serializer.data)
+            createLog(logModel, serializer.errors, logExcepcion)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def factura_listOne_facturaFisica(request, pk):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'listOne/factura',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            query = FacturasFisicas.objects.filter(credito_id=pk, state=1).order_by('-created_at').first()
+        except FacturasFisicas.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'GET':
+            serializer = FacturasFisicasSerializer(query)
+            createLog(logModel, serializer.data, logTransaccion)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

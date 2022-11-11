@@ -684,7 +684,7 @@ def enviarCodigoCorreoMicroCredito(codigo, email):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def creditoPersonas_codigo_creditoAprobado(request):
     nowDate = timezone.localtime(timezone.now())
     logModel = {
@@ -711,7 +711,7 @@ def creditoPersonas_codigo_creditoAprobado(request):
             longitud_codigo = Catalogo.objects.filter(tipo='CONFIG_TWILIO', nombre='LONGITUD_CODIGO',
                                                       state=1).first().valor
             codigo = (''.join(random.choice(string.digits) for _ in range(int(longitud_codigo))))
-            enviarCodigoCorreoMicroCredito(codigo, query.email)
+            enviarCodigoCorreoMicroCredito(codigo, query.user['email'])
             serializer = CodigoCreditoSerializer(data={'credito_id': str(query._id), 'codigo': codigo,
                                                        'numeroIdentificacion': request.data['numeroIdentificacion']})
             if serializer.is_valid():

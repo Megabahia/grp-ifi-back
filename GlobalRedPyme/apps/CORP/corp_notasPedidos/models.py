@@ -71,7 +71,8 @@ class FacturasFisicas(models.Model):
     descripcion = models.CharField(max_length=150, null=True, blank=True)
     cantidad = models.PositiveIntegerField(null=True, blank=True)
     precio = models.FloatField(null=True, blank=True)
-    facturaFisica = models.FileField(blank=False, null=False, upload_to=upload_path)
+    facturaFisica = models.FileField(blank=True, null=True, upload_to=upload_path)
+    cooperativa = models.CharField(max_length=150, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

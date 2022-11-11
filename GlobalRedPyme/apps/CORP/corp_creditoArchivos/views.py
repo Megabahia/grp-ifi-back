@@ -628,7 +628,7 @@ def creditoArchivos_ver_documentosFirmados_list(request):
         except ArchivosFirmados.DoesNotExist:
             err = {"error": "No existe"}
             createLog(logModel, err, logExcepcion)
-            return Response(err, status=status.HTTP_404_NOT_FOUND)
+            return Response(err, status=status.HTTP_200_OK)
         # tomar el dato
         if request.method == 'POST':
             serializer = ArchivosFirmadosSerializer(query)
