@@ -76,6 +76,10 @@ def get_queue_url():
                 jsonRequest['estado'] = 'Nuevo'
 
                 print('antes de actualizar')
+                if 'whatsappPersona' in jsonRequest:
+                    jsonRequest.pop('whatsappPersona')
+                if 'emailPersona' in jsonRequest:
+                    jsonRequest.pop('emailPersona')
                 CreditoPersonas.objects.filter(external_id=query.external_id).update(**jsonRequest)
                 credito = query
                 print('se guardo')
