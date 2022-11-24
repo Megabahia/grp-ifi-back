@@ -667,16 +667,22 @@ def prueba(request):
 
 
 def enviarCodigoCorreoMicroCredito(codigo, email):
-    subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
+    subject, from_email, to = 'Generación de código para crédito aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = codigo
     html_content = f"""
                 <html>
                     <body>
-                        <h1>Se acaba de generar el codigo de seguridad para consultar los creditos</h1><br>
-                        <p>Tu código para acceder a consultar los creditos aprobados es: {codigo}</p><br>
-                        Saludos,<br>
-                        Equipo Global Red Pymes.<br>
+                        <h1>Su código de seguridad para consulta de créditos se ha generado</h1>
+                        <br>
+                        <p>Hola!</p>
+                        <br>
+                        <p>Su código de seguridad para consulta de créditos es: {codigo}</p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        CrediCompra-Big Puntos.
+                        <br>
                     </body>
                 </html>
                 """
