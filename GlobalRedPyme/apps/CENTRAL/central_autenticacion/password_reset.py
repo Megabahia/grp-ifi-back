@@ -1,24 +1,26 @@
-#lib token
+# lib token
 from django_rest_passwordreset.serializers import EmailSerializer
 from django_rest_passwordreset.models import ResetPasswordToken, clear_expired, get_password_reset_token_expiry_time, \
     get_password_reset_lookup_field
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-#lib email
+# lib email
 from apps.config.util import sendEmail
-#lib reseteo contraseña
+# lib reseteo contraseña
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.dispatch import receiver
 from django.urls import reverse
 from apps.config import config
 from rest_framework.response import Response
 from rest_framework import status
+
+
 def resetPasswordNewUser(emailUsuario):
     try:
         User = get_user_model()
-        #asignamos el email mandado
-        email=emailUsuario
+        # asignamos el email mandado
+        email = emailUsuario
         # borra los tokens expirados
         password_reset_token_validation_time = get_password_reset_token_expiry_time()
         # datetime.now minus expiry hours
@@ -61,67 +63,73 @@ def resetPasswordNewUser(emailUsuario):
                     return str(token.key)
                 return 'Token no generado'
         # done
-    except Exception as e: 
-       return 'Ocurrió un error, Token no generado: {}'.format(e) 
-#email
+    except Exception as e:
+        return 'Ocurrió un error, Token no generado: {}'.format(e)
+    # email
+
 
 def enviarEmailAsignacionPassword(reset_password_token):
     try:
-        #enviar por email
+        # enviar por email
         if reset_password_token.user.tipoUsuario.nombre == 'core':
-            url=config.API_FRONT_END_CENTRAL+config.endpointEmailReseteoPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
+            url = config.API_FRONT_END_CENTRAL + config.endpointEmailReseteoPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
         elif reset_password_token.user.tipoUsuario.nombre == 'credit':
-            url=config.API_FRONT_END_CREDIT+config.endpointEmailReseteoPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
+            url = config.API_FRONT_END_CREDIT + config.endpointEmailReseteoPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
         else:
-            url=config.API_FRONT_END+config.endpointEmailAsignacionPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
+            url = config.API_FRONT_END + config.endpointEmailAsignacionPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
         # url=config.API_FRONT_END+config.endpointEmailAsignacionPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
-        subject, from_email, to = 'Solicitud de Reinicio de contraseña Global Red Pyme', "08d77fe1da-d09822@inbox.mailtrap.io",reset_password_token.user.email
-        txt_content="""
-                Registro de Contraseña Global Red Pymes Personas
-                Para poder ingresar a la plataforma de Global Red Pymes Personas usted  debe registrar la contraseña,
-                Haga clic en el siguiente enlace para registrar su contraseña:
-                """+url+"""
-                Si al hacer click en el enlace anterior no funciona, copie y pegue la URL en una nueva ventana del navegador
+        subject, from_email, to = 'Registro de cuenta-contraseña Crédito Pagos', "08d77fe1da-d09822@inbox.mailtrap.io", reset_password_token.user.email
+        txt_content = f"""
+                Registro de Contraseña Crédito Pagos
+                Hola!
+                Para poder ingresar a la Plataforma de Global Red Pyme-Crédito Pagos usted debe registrar su contraseña.
+                Ha click en el siguiente enlace: {url}
+                Si al hacer click en el enlace anterior no funciona, copie y pegue el siguiente URL en una ventana del navegador {url}
                 Atentamente,
-                Equipo Global Red Pymes Personas.
+                Global Red Pyme-Crédito Pagos.
         """
-        html_content = """
+        html_content = f"""
         <html>
             <body>
-                <h1>Registro de Contraseña Global Red Pymes Personas</h1>
-                Para poder ingresar a la plataforma de Global Red Pymes Personas usted  debe registrar la contraseña<br>
-                Haga clic en el siguiente enlace para registrar su contraseña:<br>
-                <a href='"""+url+"""'>Clic Aquí!</a><br>
-                Si al hacer click en el enlace anterior no funciona, copie y pegue la URL en una nueva ventana del navegador<br>
-                Atentamente,<br>
-                Equipo Global Red Pymes Personas.<br>
+                <h1>Registro de Contraseña Crédito Pagos</h1>
+                <h3>Hola|</h3>
+                <p>Para poder ingresar a la Plataforma de Global Red Pyme-Crédito Pagos usted debe registrar su contraseña.</p>
+                <br>
+                <p>Ha click en el siguiente enlace: <a href='{url}'>Clic Aquí!</a></p>
+                <br>
+                <p>Si al hacer click en el enlace anterior no funciona, copie y pegue el siguiente URL en una ventana del navegador {url}</p>
+                <br>
+                Atentamente,
+                <br>
+                Global Red Pyme-Crédito Pagos.
+                <br>
             </body>
         </html>
         """
-        if sendEmail(subject, txt_content, from_email,to,html_content):
+        if sendEmail(subject, txt_content, from_email, to, html_content):
             return True
         return False
     except:
         return False
 
+
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
- 
     try:
-        #enviar por email
+        # enviar por email
         # email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
         if reset_password_token.user.tipoUsuario.nombre == 'core':
-            url=config.API_FRONT_END_CENTRAL+config.endpointEmailReseteoPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
+            url = config.API_FRONT_END_CENTRAL + config.endpointEmailReseteoPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
         elif reset_password_token.user.tipoUsuario.nombre == 'credit':
-            url=config.API_FRONT_END_CREDIT+config.endpointEmailReseteoPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
+            url = config.API_FRONT_END_CREDIT + config.endpointEmailReseteoPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
         else:
-            url=config.API_FRONT_END+config.endpointEmailAsignacionPassword+"?token="+reset_password_token.key+"&email="+reset_password_token.user.email
-        subject, from_email, to = 'Solicitud de Reinicio de contraseña Global Red Pyme', "08d77fe1da-d09822@inbox.mailtrap.io",reset_password_token.user.email
-        txt_content="""
+            url = config.API_FRONT_END + config.endpointEmailAsignacionPassword + "?token=" + reset_password_token.key + "&email=" + reset_password_token.user.email
+        subject, from_email, to = 'Solicitud de Reinicio de contraseña Global Red Pyme', "08d77fe1da-d09822@inbox.mailtrap.io", reset_password_token.user.email
+        txt_content = """
                 Reinicio de Contraseña
                 Para iniciar el proceso de restablecimiento de contraseña para su cuenta de Global Red Pyme,
                 Haga clic en el siguiente enlace:
-                """+url+"""
+                """ + url + """
                 Si al hacer click en el enlace anterior no funciona, copie y pegue la URL en una nueva ventana del navegador
                 Atentamente,
                 Equipo Global Red Pymes Personas.
@@ -132,32 +140,32 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
                 <h1>Reinicio de Contraseña</h1>
                 Para iniciar el proceso de restablecimiento de contraseña para su cuenta de Global Red Pyme,<br>
                 Haga clic en el siguiente enlace:<br>
-                <a href='"""+url+"""'>Clic Aquí!</a><br>
+                <a href='""" + url + """'>Clic Aquí!</a><br>
                 Si al hacer click en el enlace anterior no funciona, copie y pegue la URL en una nueva ventana del navegador<br>
                 Atentamente,<br>
                 Equipo Global Red Pymes Personas.<br>
             </body>
         </html>
         """
-        sendEmail(subject, txt_content, from_email,to,html_content)
-    
-        #enviar por numero de whatsapp
+        sendEmail(subject, txt_content, from_email, to, html_content)
+
+        # enviar por numero de whatsapp
         # numWhatsapp=reset_password_token.user.whatsapp
         # if numWhatsapp:
         #     #aqui codigo de whatsapp
         #     print(numWhatsapp)
         # else:
         #     print('No posee num whatsapp')
-    except Exception as e: 
-        err={"error":'Un error ha ocurrido: {}'.format(e)}  
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 def enviarEmailCreacionPersona(email):
     try:
-        #enviar por email
-        subject, from_email, to = 'Creación de usuario Global Red Pymes Personas', "08d77fe1da-d09822@inbox.mailtrap.io",email
-        txt_content="""
+        # enviar por email
+        subject, from_email, to = 'Creación de usuario Global Red Pymes Personas', "08d77fe1da-d09822@inbox.mailtrap.io", email
+        txt_content = """
                 Registro de usuario Global Red Pymes Personas
                 Felicidades usted se acaba de registrar a la plataforma de Global Red Pymes Personas.
                 
@@ -175,7 +183,7 @@ def enviarEmailCreacionPersona(email):
             </body>
         </html>
         """
-        if sendEmail(subject, txt_content, from_email,to,html_content):
+        if sendEmail(subject, txt_content, from_email, to, html_content):
             return True
         return False
     except:
