@@ -1,5 +1,5 @@
 from django.urls import path,include
-from apps.CENTRAL.central_usuarios.views import(
+from .views import(
 	usuario_list,
 	usuario_listExport,
 	usuario_create,
