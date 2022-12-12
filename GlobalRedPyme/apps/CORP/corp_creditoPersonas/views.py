@@ -84,6 +84,7 @@ def creditoPersonas_create(request):
                 if serializer.data['estado'] == 'Nuevo' and serializer.data['tipoCredito'] == 'Pymes-Normales':
                     # Publicar en la cola
                     publish(serializer.data)
+                    enviarCorreoSolicitud(request.data['email'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -772,3 +773,30 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
         err = {"error": 'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel, err, logExcepcion)
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+def enviarCorreoSolicitud(email):
+    subject, from_email, to = 'Generación de código para crédito aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = f"""
+                        Global RedPyme - Crédito Pagos ha recibido su solicitud, estaremos en contacto con usted a la brevedad posible.
+                            Crédito Pagos es la mejor opción para el crecimiento de su negocio
+                        Atentamente,
+                        Global RedPyme – Crédito Pagos
+    """
+    html_content = f"""
+                <html>
+                    <body>
+                        <p>Global RedPyme - Crédito Pagos ha recibido su solicitud, estaremos en contacto con usted a la brevedad posible.</p>
+                        <br>
+                        <br>
+                        <p><b>Crédito Pagos es la mejor opción para el crecimiento de su negocio</b></p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        Global RedPyme – Crédito Pagos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
