@@ -157,7 +157,8 @@ def personas_update(request, pk):
             request.data['updated_at'] = str(now)
             if 'created_at' in request.data:
                 request.data.pop('created_at')
-            request.data['nombresCompleto'] = request.data['nombres'] +' '+request.data['apellidos']
+            if 'apellidos' in request.data:
+                request.data['nombresCompleto'] = request.data['nombres'] +' '+request.data['apellidos']
             serializer = PersonasUpdateSerializer(query, data=request.data,partial=True)
             if serializer.is_valid():
                 serializer.save()

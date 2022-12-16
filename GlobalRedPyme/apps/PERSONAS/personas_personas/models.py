@@ -32,6 +32,13 @@ class Personas(models.Model):
     imagen = models.FileField(blank=True, null=True, upload_to=upload_path)
     user_id = models.CharField(max_length=250, blank=False, null=False)  # Relacion usuario
     empresaInfo = jsonfield.JSONField()
+    datosPyme = jsonfield.JSONField()
+    estadoCivil = models.CharField(max_length=250, blank=True, null=True)
+    cedulaRepresentante = models.CharField(max_length=250, blank=True, null=True)
+    direccionRepresentante = models.CharField(max_length=250, blank=True, null=True)
+    celularRepresentante = models.CharField(max_length=250, blank=True, null=True)
+    whatsappRepresentante = models.CharField(max_length=250, blank=True, null=True)
+    correoRepresentante = models.CharField(max_length=250, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
