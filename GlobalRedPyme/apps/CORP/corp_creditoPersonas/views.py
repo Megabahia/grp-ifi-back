@@ -776,7 +776,7 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
 
 
 def enviarCorreoSolicitud(email):
-    subject, from_email, to = 'Generación de código para crédito aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
+    subject, from_email, to = 'Solicitud de Crédito Recibida – Crédito Pagos', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = f"""
                         Global RedPyme - Crédito Pagos ha recibido su solicitud, estaremos en contacto con usted a la brevedad posible.
