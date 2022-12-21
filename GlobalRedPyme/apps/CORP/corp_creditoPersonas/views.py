@@ -75,7 +75,7 @@ def creditoPersonas_create(request):
 
             if 'nombres' in request.data:
                 if request.data['nombres'] != "":
-                    request.data['nombresCompleto'] = request.data['nombres'] + ' ' + request.data['apellidos']
+                    request.data['nombresCompleto'] = f"""{request.data['nombres']} {request.data['apellidos']}"""
 
             serializer = CreditoPersonasSerializer(data=request.data)
             if serializer.is_valid():
