@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'apps.CORP.corp_monedasEmpresa',
     'apps.CORP.corp_creditoArchivos',
     'apps.CORP.corp_envios',
+    'apps.CORP.corp_firmaElectronica',
+    'apps.CORP.corp_pagoProveedores',
     # Pymes
     'apps.CORP.corp_empresas',
     # apps core

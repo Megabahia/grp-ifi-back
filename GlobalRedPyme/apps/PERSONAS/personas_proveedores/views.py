@@ -73,7 +73,7 @@ def proveedores_listOne(request, pk):
     }
     try:
         try:
-            query = Proveedores.objects.filter(_id=ObjectId(pk), state=1).first()
+            query = Proveedores.objects.filter(identificacion=pk, state=1).first()
         except Proveedores.DoesNotExist:
             err = {"error": "No existe"}
             createLog(logModel, err, logExcepcion)
