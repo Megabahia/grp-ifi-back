@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
+import json
+# Enviar Correo
+from apps.config.util import sendEmail
 # ObjectId
 from bson import ObjectId
 # logs
@@ -42,7 +45,6 @@ def pagoProveedores_create(request):
     }
     if request.method == 'POST':
         try:
-            print('llega')
             logModel['dataEnviada'] = str(request.data)
             request.data['created_at'] = str(timezone_now)
             if 'updated_at' in request.data:
@@ -59,6 +61,54 @@ def pagoProveedores_create(request):
             err = {"error": 'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def pagoProveedores_update(request, pk):
+    request.POST._mutable = True
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'update/',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'ESCRIBIR',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            logModel['dataEnviada'] = str(request.data)
+            query = PagoProveedores.objects.filter(pk=ObjectId(pk), state=1).first()
+        except PagoProveedores.DoesNotExist:
+            errorNoExiste = {'error': 'No existe'}
+            createLog(logModel, errorNoExiste, logExcepcion)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if request.method == 'POST':
+            now = timezone.localtime(timezone.now())
+            request.data['updated_at'] = str(now)
+            if 'created_at' in request.data:
+                request.data.pop('created_at')
+            serializer = PagoProveedorSerializer(query, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                usuario = json.loads(query.usuario)
+                if 'Negado' in query.estado:
+                    enviarNegadoPago(usuario['email'], query.valorPagar)
+
+                if 'Procesar' in query.estado:
+                    enviarProcesandoPago(usuario['email'], query.valorPagar)
+
+                createLog(logModel, serializer.data, logTransaccion)
+                return Response(serializer.data)
+            createLog(logModel, serializer.errors, logExcepcion)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -103,11 +153,54 @@ def pagoProveedores_list(request):
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
+def enviarNegadoPago(email, monto):
+    subject, from_email, to = 'RAZÓN POR LA QUE SE NIEGA EL PAGO A PROVEEDORES', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = monto
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>PAGO A PROVEEDORES - CRÉDITO PAGOS</h1>
+                        <br>
+                        <h3><b>Lo sentimos!!</b></h3>
+                        <br>
+                        <p>La transferencia por ${monto} DE LA FACTURA A PAGAR ha sido rechazada. 
+                        Por favor revise sus fondos e intente de nuevo.</p>
+                        <br>
+                        <br>
+                        <p>Si cree que es un error, contáctese con su agente a través de https://walink.co/b5e9c0</p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        Global RedPyme – Crédito Pagos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
 
 
-
-
-
-
-
-
+def enviarProcesandoPago(email, monto):
+    subject, from_email, to = 'Transferencia exitosa', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = monto
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>PAGO A PROVEEDORES - CRÉDITO PAGOS</h1>
+                        <br>
+                        <h3><b>FELICIDADES!!</b></h3>
+                        <br>
+                        <p>La transferencia por ${monto} DE LA FACTURA A PAGAR ha sido realizada con éxito, 
+                        adjuntamos el comprobante del pago realizado. 
+                        En 24 horas será acreditado a la cuenta destino.</p>
+                        <br>
+                        <br>
+                        Atentamente,
+                        <br>
+                        Global RedPyme – Crédito Pagos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
