@@ -1,3 +1,5 @@
+import io
+
 from .models import PagoProveedores
 from .serializers import (
     PagoProveedorSerializer
@@ -8,6 +10,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 import json
+# Importar boto3
+import boto3
+import tempfile
+import environ
+import os
+# Import PDF
+from fpdf import FPDF
 # Enviar Correo
 from apps.config.util import sendEmail
 # ObjectId
@@ -91,6 +100,25 @@ def pagoProveedores_update(request, pk):
             request.data['updated_at'] = str(now)
             if 'created_at' in request.data:
                 request.data.pop('created_at')
+
+            if 'claveFirma' in request.data:
+                if request.data != '':
+                    # certificado = open('/Users/papamacone/Downloads/6194645_identity.p12', 'rb')
+                    # pdf2 = open('/Users/papamacone/Downloads/CASH API-v8.pdf', 'rb')
+                    # pdf = generarPDF('cdssd')
+                    # print(ruta)
+                    datau, datas = firmar(request)
+                    archivo_pdf_para_enviar_al_cliente = io.BytesIO()
+                    archivo_pdf_para_enviar_al_cliente.write(datau)
+                    archivo_pdf_para_enviar_al_cliente.write(datas)
+                    archivo_pdf_para_enviar_al_cliente.seek(0)
+
+                    print(request.data['pdf'])
+                    print(datas)
+                    request.data['archivoFirmado'] = send_file(archivo_pdf_para_enviar_al_cliente, mimetype="application/pdf",
+                         download_name="firmado" + ".pdf",
+                         as_attachment=True)
+
             serializer = PagoProveedorSerializer(query, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -152,6 +180,46 @@ def pagoProveedores_list(request):
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.serialization import pkcs12
+from endesive.pdf import cms
+
+def firmar(request):
+    print('entro')
+    certificado = request.data['certificado']
+    pdf = request.data['pdf']
+    contrasenia = request.data['claveFirma']
+    date = timezone_now = timezone.localtime(timezone.now())
+    date = date.strftime("D:%Y%m%d%H%M%S+00'00'")
+    dct = {
+        "aligned": 0,
+        "sigflags": 3,
+        "sigflagsft": 132,
+        "sigpage": 0,
+        "sigbutton": True,
+        "sigfield": "Signature1",
+        "auto_sigfield": True,
+        "sigandcertify": True,
+        "signaturebox": (470, 840, 570, 640),
+        "signature": "Aquí va la firma",
+        # "signature_img": "signature_test.png",
+        "contact": "hola@ejemplo.com",
+        "location": "Ubicación",
+        "signingdate": date,
+        "reason": "Razón",
+        "password": contrasenia,
+    }
+    # with open("cert.p12", "rb") as fp:
+    p12 = pkcs12.load_key_and_certificates(
+        certificado.read(), contrasenia.encode("ascii"), backends.default_backend()
+    )
+
+    #datau = open(fname, "rb").read()
+    datau = pdf.read()
+    datas = cms.sign(datau, dct, p12[0], p12[1], p12[2], "sha256")
+    return datau, datas
+    # return Response('new_serializer_data', status=status.HTTP_200_OK)
+
 
 def enviarNegadoPago(email, monto):
     subject, from_email, to = 'RAZÓN POR LA QUE SE NIEGA EL PAGO A PROVEEDORES', "08d77fe1da-d09822@inbox.mailtrap.io", \
@@ -204,3 +272,26 @@ def enviarProcesandoPago(email, monto):
                 </html>
                 """
     sendEmail(subject, txt_content, from_email, to, html_content)
+
+
+def generarPDF(datos):
+    # save FPDF() class into a
+    # variable pdf
+    pdf = FPDF()
+
+    # Add a page
+    pdf.add_page()
+
+    # set style and size of font
+    # that you want in the pdf
+    pdf.set_font("Arial", size=15)
+
+    # create a cell
+    pdf.cell(200, 10, txt="GeeksforGeeks",
+             ln=1, align='C')
+
+    # add another cell
+    pdf.cell(200, 10, txt="A Computer Science portal for geeks.",
+             ln=2, align='C')
+
+    return pdf
