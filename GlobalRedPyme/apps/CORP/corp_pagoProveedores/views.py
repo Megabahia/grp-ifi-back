@@ -1,5 +1,6 @@
 import io
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import PagoProveedores
 from .serializers import (
     PagoProveedorSerializer
@@ -105,19 +106,19 @@ def pagoProveedores_update(request, pk):
                 if request.data != '':
                     # certificado = open('/Users/papamacone/Downloads/6194645_identity.p12', 'rb')
                     # pdf2 = open('/Users/papamacone/Downloads/CASH API-v8.pdf', 'rb')
-                    # pdf = generarPDF('cdssd')
-                    # print(ruta)
                     datau, datas = firmar(request)
                     archivo_pdf_para_enviar_al_cliente = io.BytesIO()
                     archivo_pdf_para_enviar_al_cliente.write(datau)
                     archivo_pdf_para_enviar_al_cliente.write(datas)
                     archivo_pdf_para_enviar_al_cliente.seek(0)
 
-                    print(request.data['pdf'])
-                    print(datas)
-                    request.data['archivoFirmado'] = send_file(archivo_pdf_para_enviar_al_cliente, mimetype="application/pdf",
-                         download_name="firmado" + ".pdf",
-                         as_attachment=True)
+                    request.data['archivoFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                          'media',
+                                                                          'documentoFirmado.pdf',
+                                                                          'application/pdf',
+                                                                          archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                          None
+                                                                          )
 
             serializer = PagoProveedorSerializer(query, data=request.data, partial=True)
             if serializer.is_valid():
