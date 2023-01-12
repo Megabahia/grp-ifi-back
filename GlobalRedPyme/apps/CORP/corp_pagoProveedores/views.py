@@ -106,7 +106,7 @@ def pagoProveedores_update(request, pk):
                 if request.data != '':
                     # certificado = open('/Users/papamacone/Downloads/6194645_identity.p12', 'rb')
                     # pdf2 = open('/Users/papamacone/Downloads/CASH API-v8.pdf', 'rb')
-                    datau, datas = firmar(request)
+                    datau, datas = firmar(request, query)
                     archivo_pdf_para_enviar_al_cliente = io.BytesIO()
                     archivo_pdf_para_enviar_al_cliente.write(datau)
                     archivo_pdf_para_enviar_al_cliente.write(datas)
@@ -185,8 +185,8 @@ from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
 from endesive.pdf import cms
 
-def firmar(request):
-    print('entro')
+def firmar(request, query):
+    usuario = json.loads(query.usuario)
     certificado = request.data['certificado']
     pdf = request.data['pdf']
     contrasenia = request.data['claveFirma']
@@ -202,12 +202,12 @@ def firmar(request):
         "auto_sigfield": True,
         "sigandcertify": True,
         "signaturebox": (470, 840, 570, 640),
-        "signature": "Aquí va la firma",
+        "signature": usuario['nombresCompleto'],
         # "signature_img": "signature_test.png",
-        "contact": "hola@ejemplo.com",
+        "contact": usuario['email'],
         "location": "Ubicación",
         "signingdate": date,
-        "reason": "Razón",
+        "reason": "Pago a proveedor " + query.nombrePyme,
         "password": contrasenia,
     }
     # with open("cert.p12", "rb") as fp:
@@ -260,7 +260,7 @@ def enviarProcesandoPago(email, monto):
                         <br>
                         <h3><b>FELICIDADES!!</b></h3>
                         <br>
-                        <p>La transferencia por ${monto} DE LA FACTURA A PAGAR ha sido realizada con éxito, 
+                        <p>La transferencia por ${monto} ha sido realizada con éxito, 
                         adjuntamos el comprobante del pago realizado. 
                         En 24 horas será acreditado a la cuenta destino.</p>
                         <br>

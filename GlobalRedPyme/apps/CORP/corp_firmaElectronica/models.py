@@ -9,8 +9,9 @@ class FirmaElectronica(models.Model):
     correoRepresentante = models.CharField(max_length=255, null=True, blank=True)
     telefonoRepresentante = models.CharField(max_length=255, null=True, blank=True)
     whatsappRepresentante = models.CharField(max_length=255, null=True, blank=True)
-    cedulaRepresentante = models.CharField(max_length=255, null=True, blank=True)
-    archivo = models.CharField(max_length=255, null=True, blank=True)
+    tipoIdentificacionRepresentante = models.CharField(max_length=255, null=True, blank=True)
+    identificacionRepresentante = models.CharField(max_length=255, null=True, blank=True)
+    aceptarTerminos = models.BooleanField(default=False)
     user_id = models.CharField(max_length=255, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

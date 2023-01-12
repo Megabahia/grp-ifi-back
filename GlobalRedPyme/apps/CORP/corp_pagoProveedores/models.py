@@ -21,6 +21,7 @@ class PagoProveedores(models.Model):
     usuario = jsonfield.JSONField()
     estado = models.CharField(max_length=255, null=True, blank=True)
     observacion = models.CharField(max_length=255, null=True, blank=True)
+    fechaFirma = models.DateTimeField(null=True, blank=True)
     user_id = models.CharField(max_length=255, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
