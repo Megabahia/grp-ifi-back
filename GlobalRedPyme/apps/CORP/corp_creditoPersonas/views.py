@@ -165,6 +165,12 @@ def creditoPersonas_update(request, pk):
                 if serializer.data['estado'] == 'Negado':
                     # Publicar en la cola
                     publish(serializer.data)
+                if serializer.data['estado'] == 'Por Completar':
+                    # Publicar en la cola
+                    publish(serializer.data)
+                if serializer.data['estado'] == 'Negado':
+                    # Publicar en la cola
+                    publish(serializer.data)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -662,9 +668,25 @@ def JobResults(jobId):
 
 @api_view(['GET'])
 def prueba(request):
-    get_queue_url()
-    err = {"error": "No existe"}
-    return Response(err, status=status.HTTP_404_NOT_FOUND)
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'listOne/',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        get_queue_url()
+        msg = {"msg": "Se actualizo la cola"}
+        return Response(msg, status=status.HTTP_202_ACCEPTED)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
 def enviarCodigoCorreoMicroCredito(codigo, email):

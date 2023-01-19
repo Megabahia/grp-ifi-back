@@ -34,5 +34,5 @@ urlpatterns = [
          name="creditoPersonas_codigo_creditoAprobado"),
     path('validar/codigo/creditoAprobado', creditoPersonas_validar_codigo_creditoAprobado,
          name="creditoPersonas_validar_codigo_creditoAprobado"),
-    path('prueba', prueba, name="prueba"),
+    path('pruebaConsumer', prueba, name="prueba"),
 ]
