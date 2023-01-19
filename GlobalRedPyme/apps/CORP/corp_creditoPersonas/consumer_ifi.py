@@ -56,6 +56,10 @@ def get_queue_url():
                     print('antes de actualizar desde bigpuntos')
                     if 'entidadFinanciera' in jsonRequest:
                         jsonRequest.pop('entidadFinanciera')
+                    if jsonRequest['estado'] == 'Enviado':
+                        jsonRequest['estado'] = 'Nuevo'
+                    if jsonRequest['estado'] == 'Completado':
+                        jsonRequest['estado'] = 'Completado'
                     CreditoPersonas.objects.filter(_id=ObjectId(jsonRequest['external_id'])).update(**jsonRequest)
                     credito = query
                     print('se guardo')
@@ -65,7 +69,10 @@ def get_queue_url():
                     if 'emailPersona' in jsonRequest:
                         jsonRequest.pop('emailPersona')
                     jsonRequest['external_id'] = _idCredidPerson
-                    jsonRequest['estado'] = 'Nuevo'
+                    if jsonRequest['estado'] == 'Enviado':
+                        jsonRequest['estado'] = 'Nuevo'
+                    if jsonRequest['estado'] == 'Completado':
+                        jsonRequest['estado'] = 'Completado'
                     print('antes de guardar')
                     credito = CreditoPersonas.objects.create(**jsonRequest)
                     print('se guardo')
@@ -73,7 +80,10 @@ def get_queue_url():
                 # Quitar los campos que no estan en el modelo de credito persona
 
                 jsonRequest['external_id'] = _idCredidPerson
-                jsonRequest['estado'] = 'Nuevo'
+                if jsonRequest['estado'] == 'Enviado':
+                    jsonRequest['estado'] = 'Nuevo'
+                if jsonRequest['estado'] == 'Completado':
+                    jsonRequest['estado'] = 'Completado'
 
                 print('antes de actualizar')
                 if 'whatsappPersona' in jsonRequest:
