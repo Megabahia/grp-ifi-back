@@ -5,6 +5,8 @@ from apps.CENTRAL.central_usuarios.models import Usuarios, UsuariosEmpresas
 # Importar base de datos personas
 from apps.PERSONAS.personas_personas.models import Personas
 # Importar serializers empresa y base de datos empresa
+from apps.CORP.corp_creditoPersonas.models import CreditoPersonas
+# Importar serializers empresa y base de datos empresa
 from apps.CORP.corp_empresas.models import Empresas
 from apps.CORP.corp_empresas.serializers import EmpresasSerializer
 # Importar serializer de personas
@@ -87,6 +89,16 @@ class login(ObtainAuthToken):
                     except Exception as e:
                         empresaSerializer = {}
 
+                    try:
+                        credito = CreditoPersonas.objects.filter(user_id=str(user.pk), state=1).order_by('-created_at').first()
+                        if credito.estado == 'Por Completar' or credito.estado == 'Negado':
+                            creditoAprobado = 8
+                        else:
+                            creditoAprobado = 0
+                    except Exception as e:
+                        print(e)
+                        creditoAprobado = 0
+
                     data = {
                         'token': token.key,
                         'id': str(user.pk),
@@ -95,7 +107,8 @@ class login(ObtainAuthToken):
                         'email': user.email,
                         'tokenExpiracion': expires_in(token),
                         'roles': roles,
-                        'estado': user.estado
+                        'estado': user.estado,
+                        'creditoAprobado': creditoAprobado,
                     }
                     createLog(logModel, data, logTransaccion)
                     return Response(data, status=status.HTTP_200_OK)
