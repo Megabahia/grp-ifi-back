@@ -97,6 +97,11 @@ class CreditoPersonas(models.Model):
     numeroFacturaproveedor = models.FileField(blank=True, null=True, upload_to=upload_path)
     motivo = models.TextField(null=True, blank=True)
 
+    solicitudCreditoFirmado = models.FileField(blank=True, null=True, upload_to=upload_path)
+    pagareFirmado = models.FileField(blank=True, null=True, upload_to=upload_path)
+    contratosCuentaFirmado = models.FileField(blank=True, null=True, upload_to=upload_path)
+    tablaAmortizacionFirmado = models.FileField(blank=True, null=True, upload_to=upload_path)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     state = models.SmallIntegerField(default=1)

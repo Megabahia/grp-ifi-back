@@ -1,3 +1,6 @@
+import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 from apps.CENTRAL.central_catalogo.models import Catalogo
 from .models import CreditoPersonas, CodigoCredito
 from apps.PERSONAS.personas_personas.models import Personas
@@ -8,6 +11,10 @@ from .serializers import (
 )
 # Enviar Correo
 from apps.config.util import sendEmail
+# Importar boto3
+import boto3
+import tempfile
+import environ
 # Publicar en sns
 from .producer_ifi import publish
 # Consumir en sqs
@@ -158,6 +165,68 @@ def creditoPersonas_update(request, pk):
             request.data['updated_at'] = str(now)
             if 'created_at' in request.data:
                 request.data.pop('created_at')
+
+            if 'claveFirma' in request.data:
+                if request.data['claveFirma'] != '':
+                    usuario = query.empresaInfo
+                    date = now.strftime("D:%Y%m%d%H%M%S+00'00'")
+                    dct = {
+                        "aligned": 0,
+                        "sigflags": 3,
+                        "sigflagsft": 132,
+                        "sigpage": 0,
+                        "sigbutton": True,
+                        "sigfield": "Signature1",
+                        "auto_sigfield": True,
+                        "sigandcertify": True,
+                        "signaturebox": (470, 840, 570, 640),
+                        "signature": usuario['reprsentante'],
+                        # "signature_img": "signature_test.png",
+                        "contact": usuario['correo'],
+                        "location": "Ubicación",
+                        "signingdate": date,
+                        "reason": "Firmar documentos habilitantes",
+                        "password": request.data['claveFirma'],
+                    }
+            if 'solicitudCreditoFirmado' in request.data:
+                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'solicitudCreditoFirmado')
+                request.data['solicitudCreditoFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                      'media',
+                                                                      'solicitudCreditoFirmado.pdf',
+                                                                      'application/pdf',
+                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                      None
+                                                                      )
+            if 'pagareFirmado' in request.data:
+                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'pagareFirmado')
+                request.data['pagareFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                      'media',
+                                                                      'pagareFirmado.pdf',
+                                                                      'application/pdf',
+                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                      None
+                                                                      )
+            if 'contratosCuentaFirmado' in request.data:
+                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'contratosCuentaFirmado')
+                request.data['contratosCuentaFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                      'media',
+                                                                      'contratosCuentaFirmado.pdf',
+                                                                      'application/pdf',
+                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                      None
+                                                                      )
+            if 'tablaAmortizacionFirmado' in request.data:
+                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'tablaAmortizacionFirmado')
+                request.data['tablaAmortizacionFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                      'media',
+                                                                      'tablaAmortizacionFirmado.pdf',
+                                                                      'application/pdf',
+                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                      None
+                                                                      )
+
+
+
             serializer = CreditoPersonasSerializer(query, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -819,3 +888,34 @@ def enviarCorreoSolicitud(email):
                 </html>
                 """
     sendEmail(subject, txt_content, from_email, to, html_content)
+
+
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.serialization import pkcs12
+from endesive.pdf import cms
+
+def firmar(request, dct, nombreArchivo):
+    certificado = request.data['certificado']
+    # environ init
+    env = environ.Env()
+    environ.Env.read_env()  # LEE ARCHIVO .ENV
+    client_s3 = boto3.client(
+        's3',
+        aws_access_key_id=env.str('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=env.str('AWS_SECRET_ACCESS_KEY')
+    )
+    with tempfile.TemporaryDirectory() as d:
+        ruta = d + 'SOLICITUD_REMATRICULA_DE_.pdf'
+        s3 = boto3.resource('s3')
+        archivo = s3.meta.client.download_file('globalredpymes', str(request.data[nombreArchivo]), ruta)
+    contrasenia = request.data['claveFirma']
+    p12 = pkcs12.load_key_and_certificates(
+        certificado.read(), contrasenia.encode("ascii"), backends.default_backend()
+    )
+    datau = open(ruta, "rb").read()
+    datas = cms.sign(datau, dct, p12[0], p12[1], p12[2], "sha256")
+    archivo_pdf_para_enviar_al_cliente = io.BytesIO()
+    archivo_pdf_para_enviar_al_cliente.write(datau)
+    archivo_pdf_para_enviar_al_cliente.write(datas)
+    archivo_pdf_para_enviar_al_cliente.seek(0)
+    return archivo_pdf_para_enviar_al_cliente
