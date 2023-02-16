@@ -22,6 +22,10 @@ class Monedas(models.Model):
 
     _id = models.ObjectIdField()
     user_id = models.CharField(max_length=200,null=True, blank=True)
+    identificacion = models.CharField(max_length=200, null=True, blank=True)
+    nombres = models.CharField(max_length=200, null=True, blank=True)
+    apellidos = models.CharField(max_length=200, null=True, blank=True)
+    email = models.CharField(max_length=200, null=True, blank=True)
     autorizador_id = models.CharField(max_length=200, null=True, blank=True)
     empresa_id = models.CharField(max_length=255, null=True, blank=True)
     tipo = models.CharField(max_length=255, choices=TipoEnum.choices, default=TipoEnum.OTRO)
