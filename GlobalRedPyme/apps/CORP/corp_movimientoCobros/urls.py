@@ -1,5 +1,5 @@
 from django.urls import path,include
-from apps.CORP.corp_movimientoCobros.views import(
+from .views import(
 	movimientoCobros_create,
 	movimientoCobros_list,
 	movimientoCobros_listOne,

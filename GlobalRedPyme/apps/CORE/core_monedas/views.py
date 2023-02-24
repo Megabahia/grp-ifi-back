@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 # Utils
 from apps.utils import utils
+# Enviar Correo
+from apps.config.util import sendEmail
 # Swagger
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -396,7 +398,8 @@ def uploadEXCEL_monedasRegaladas(request):
 def insertarDato_monedas(dato):
     try:
         timezone_now = timezone.localtime(timezone.now())
-        if (not utils.__validar_ced_ruc(dato[1], 0)):
+        print(utils.__validar_ced_ruc(dato[1], 0))
+        if (utils.__validar_ced_ruc(dato[1], 0) is False):
             return 'Cedula incorrecta'
         data = {}
         persona = Personas.objects.filter(identificacion=dato[1], state=1).first()
@@ -426,6 +429,169 @@ def insertarDato_monedas(dato):
         data['created_at'] = str(timezone_now)
         # inserto el dato con los campos requeridos
         Monedas.objects.create(**data)
+        subject, from_email, to = f'Por su buen desempeño como empleado de {empresa.nombreComercial}, le premiamos', "08d77fe1da-d09822@inbox.mailtrap.io", dato[5]
+        txt_content = f"""
+                        {empresa.nombreComercial} LE PREMIA
+                        Por ser empleado de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras 
+                        de productos de varias categorías en establecimientos afiliados PAGANDO MENOS DINERO EN EFECTIVO.
+                        
+                        Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login
+                        Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.
+                        
+                        Atentamente,
+                        CrediCompra - Big Puntos
+                """
+        html_content = f"""
+                <html>
+                    <body>
+                        <h1><b>{empresa.nombreComercial} LE PREMIA</b></h1>
+                        <br>
+                        <p>
+                        Por ser empleado de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras 
+                        de productos de varias categorías en establecimientos afiliados <b>PAGANDO MENOS DINERO EN EFECTIVO.</b>
+                        </p>
+                        <br>
+                        <p>Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login</p>
+                        <br>
+                        <p>Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.</p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        <b>CrediCompra - Big Puntos</b>
+                        <br>
+                    </body>
+                </html>
+                """
+        sendEmail(subject, txt_content, from_email, to, html_content)
+        return 'Dato insertado correctamente'
+    except Exception as e:
+        return str(e)
+
+
+# METODO SUBIR ARCHIVOS EXCEL
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def uploadEXCEL_monedasRegaladasClientes(request):
+    contValidos = 0
+    contInvalidos = 0
+    contTotal = 0
+    errores = []
+    try:
+        if request.method == 'POST':
+            first = True  # si tiene encabezado
+            uploaded_file = request.FILES['documento']
+            # you may put validations here to check extension or file size
+            wb = openpyxl.load_workbook(uploaded_file)
+            # getting a particular sheet by name out of many sheets
+            worksheet = wb["Clientes"]
+            lines = list()
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            lines.append(row_data)
+
+        for dato in lines:
+            contTotal += 1
+            if first:
+                first = False
+                continue
+            else:
+                if len(dato) == 9:
+                    resultadoInsertar = insertarDato_monedasClientes(dato)
+                    if resultadoInsertar != 'Dato insertado correctamente':
+                        contInvalidos += 1
+                        errores.append({"error": "Error en la línea " + str(contTotal) + ": " + str(resultadoInsertar)})
+                    else:
+                        contValidos += 1
+                else:
+                    contInvalidos += 1
+                    errores.append({"error": "Error en la línea " + str(
+                        contTotal) + ": la fila tiene un tamaño incorrecto (" + str(len(dato)) + ")"})
+
+        result = {"mensaje": "La Importación se Realizo Correctamente",
+                  "correctos": contValidos,
+                  "incorrectos": contInvalidos,
+                  "errores": errores
+                  }
+        return Response(result, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        err = {"error": 'Error verifique el archivo, un error ha ocurrido: {}'.format(e)}
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+# INSERTAR DATOS EN LA BASE INDIVIDUAL
+def insertarDato_monedasClientes(dato):
+    try:
+        timezone_now = timezone.localtime(timezone.now())
+        print(utils.__validar_ced_ruc(dato[1], 0))
+        if (utils.__validar_ced_ruc(dato[1], 0) is False):
+            return 'Cedula incorrecta'
+        data = {}
+        persona = Personas.objects.filter(identificacion=dato[1], state=1).first()
+        if persona is not None:
+            data['user_id'] = persona.user_id
+        empresa = Empresas.objects.filter(ruc=dato[6], state=1).first()
+        data['identificacion'] = dato[1]
+        data['nombres'] = dato[2]
+        data['apellidos'] = dato[3]
+        data['email'] = dato[5]
+        data['empresa_id'] = empresa._id
+        data['tipo'] = 'Otro'
+        data['estado'] = 'pendiente'
+        data['credito'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
+        if persona is not None:
+            monedas = Monedas.objects.filter(user_id=persona.user_id, state=1).order_by(
+                '-created_at').first()
+            if monedas is not None:
+                monedasUsuario = monedas.saldo
+            else:
+                monedasUsuario = 0
+        else:
+            monedasUsuario = 0
+        data['saldo'] = monedasUsuario + float(dato[4])
+        data['descripcion'] = dato[8].replace('"', "") if dato[8] != "NULL" else None
+        # data['fechaVigencia'] = dato[8].replace('"', "")[0:10] if dato[8] != "NULL" else None
+        data['created_at'] = str(timezone_now)
+        # inserto el dato con los campos requeridos
+        Monedas.objects.create(**data)
+        subject, from_email, to = f'Por ser cliente de {empresa.nombreComercial}, le premiamos', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                                  dato[5]
+        txt_content = f"""
+                        {empresa.nombreComercial} LE PREMIA
+                        Por ser cliente de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras de 
+                        productos de varias categorías en establecimientos afiliados PAGANDO MENOS DINERO EN EFECTIVO.
+
+                        Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login 
+
+                        Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.
+
+                        Atentamente,
+                        CrediCompra - Big Puntos
+                """
+        html_content = f"""
+                <html>
+                    <body>
+                        <h1><b>{empresa.nombreComercial} LE PREMIA</b></h1>
+                        <br>
+                        <p>
+                        Por ser cliente de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras de 
+                        productos de varias categorías en establecimientos afiliados <b>PAGANDO MENOS DINERO EN EFECTIVO.</b>
+                        </p>
+                        <br>
+                        <p>Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login</p>
+                        <br>
+                        <p>Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.</p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        <b>CrediCompra - Big Puntos</b>
+                        <br>
+                    </body>
+                </html>
+                """
+        sendEmail(subject, txt_content, from_email, to, html_content)
         return 'Dato insertado correctamente'
     except Exception as e:
         return str(e)

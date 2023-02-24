@@ -8,6 +8,7 @@ from .views import (
     monedas_usuario,
     monedas_listOtorgadas,
     uploadEXCEL_monedasRegaladas,
+    uploadEXCEL_monedasRegaladasClientes,
     list_monedas_regaladas_empresa,
 )
 
@@ -22,5 +23,6 @@ urlpatterns = [
     path('usuario/<str:pk>', monedas_usuario, name="monedas_usuario"),
     path('list/otorgadas/', monedas_listOtorgadas, name="monedas_listOtorgadas"),
     path('upload/monedas', uploadEXCEL_monedasRegaladas, name="uploadEXCEL_monedasRegaladas"),
+    path('upload/monedasClientes', uploadEXCEL_monedasRegaladasClientes, name="uploadEXCEL_monedasRegaladasClientes"),
     path('list/monedas/empresas', list_monedas_regaladas_empresa, name="list_monedas_regaladas_empresa"),
 ]

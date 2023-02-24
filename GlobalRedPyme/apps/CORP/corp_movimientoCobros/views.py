@@ -6,6 +6,7 @@ from apps.CORP.corp_monedasEmpresa.models import MonedasEmpresa
 from apps.CORP.corp_movimientoCobros.serializers import (
     MovimientoCobrosSerializer
 )
+from .producer import publish_monedas
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
@@ -130,6 +131,7 @@ def movimientoCobros_create(request):
                 Pagos.objects.filter(codigoCobro=request.data['codigoCobro']).update(state=0)
                 request.data['nombreCompleto'] = request.data['nombres'] + ' ' + request.data['apellidos']
                 datos = {
+                    'numeroFactura': request.data['numeroFactura'],
                     'montoSupermonedas': request.data['montoSupermonedas'],
                     'montoTotalFactura': request.data['montoTotalFactura'],
                     'nombreCompleto': request.data['nombreCompleto'],
@@ -151,6 +153,12 @@ def movimientoCobros_create(request):
                 }
                 Monedas.objects.create(**dataEmpresa)
                 # saldo = monedasUsuario.saldo - float(request.data['montoSupermonedas'])
+                publish_monedas({
+                    'user_id': request.data['user_id'],
+                    'empresa_id': request.data['empresa_id'],
+                    'tipo': 'Debito',
+                    'debito': request.data['montoSupermonedas']
+                })
                 # Monedas.objects.create(user_id=request.data['user_id'],empresa_id=request.data['empresa_id'],tipo='Debito',debito=request.data['montoSupermonedas'],saldo=saldo)
                 createLog(logModel,serializer.data,logTransaccion)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
