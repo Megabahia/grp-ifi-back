@@ -1,7 +1,7 @@
 from .models import Monedas
 from apps.PERSONAS.personas_personas.models import Personas
 from apps.CORP.corp_empresas.models import Empresas
-from apps.CORE.core_monedas.serializers import (
+from .serializers import (
     MonedasSerializer, MonedasUsuarioSerializer, ListMonedasSerializer, ListMonedasRegaladasSerializer
 )
 from rest_framework import status
@@ -429,14 +429,14 @@ def insertarDato_monedas(dato):
         data['created_at'] = str(timezone_now)
         # inserto el dato con los campos requeridos
         Monedas.objects.create(**data)
-        subject, from_email, to = f'Por su buen desempeño como empleado de {empresa.nombreComercial}, le premiamos', "08d77fe1da-d09822@inbox.mailtrap.io", dato[5]
+        subject, from_email, to = f'Por su buen desempeño como empleado de {empresa.nombreComercial}, le premiamos', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                                  dato[5]
         txt_content = f"""
-                        {empresa.nombreComercial} LE PREMIA
-                        Por ser empleado de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras 
-                        de productos de varias categorías en establecimientos afiliados PAGANDO MENOS DINERO EN EFECTIVO.
+                        FELICIDADES!
+                        USTED ACABA DE RECIBIR
+                        {dato[4]} para que realice compras en los establecimientos afiliados pagando menos dinero en efectivo.
                         
-                        Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login
-                        Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.
+                        Regístrese a través del portal https://portal.bigpuntos.com y reciba sus Big Puntos de recompensa en su cuenta
                         
                         Atentamente,
                         CrediCompra - Big Puntos
@@ -444,16 +444,15 @@ def insertarDato_monedas(dato):
         html_content = f"""
                 <html>
                     <body>
-                        <h1><b>{empresa.nombreComercial} LE PREMIA</b></h1>
+                        <h1>FELICIDADES!</br>
+                        <br>
+                        <h1>USTED ACABA DE RECIBIR</h1>
                         <br>
                         <p>
-                        Por ser empleado de {empresa.nombreComercial} le regalamos {dato[4]} para que realice compras 
-                        de productos de varias categorías en establecimientos afiliados <b>PAGANDO MENOS DINERO EN EFECTIVO.</b>
+                        {dato[4]} para que realice compras en los establecimientos afiliados pagando menos dinero en efectivo.
                         </p>
                         <br>
-                        <p>Para acceder a sus Big Puntos, ingrese a: https://portal.bigpuntos.com/#/grp/login</p>
-                        <br>
-                        <p>Si aún no tiene cuenta en Big Puntos, regístrese a través de: https://portal.bigpuntos.com/#/grp/registro y acceda a fabulosos premios.</p>
+                        <p>Regístrese a través del portal https://portal.bigpuntos.com y reciba sus Big Puntos de recompensa en su cuenta</p>
                         <br>
                         Atentamente,
                         <br>
@@ -630,6 +629,7 @@ def list_monedas_regaladas_empresa(request):
 
             # Serializar los datos
             query = Monedas.objects.filter(**filters).order_by('-created_at')
+            print(query)
             serializer = ListMonedasRegaladasSerializer(query[offset:limit], many=True)
             new_serializer_data = {'cont': query.count(),
                                    'info': serializer.data}

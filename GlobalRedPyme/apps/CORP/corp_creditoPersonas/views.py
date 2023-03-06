@@ -237,6 +237,9 @@ def creditoPersonas_update(request, pk):
                 if serializer.data['estado'] == 'Por Completar':
                     # Publicar en la cola
                     publish(serializer.data)
+                if serializer.data['estado'] == 'Aprobado':
+                    usuario = serializer.data['user']
+                    enviarCorreoAprobado(serializer.data['montoLiquidar'], usuario['email'])
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -388,9 +391,9 @@ def creditoPersonas_list(request):
                 if request.data["canal"] != '':
                     filters['canal'] = str(request.data["canal"])
 
-            if "identificacion" in request.data:
-                if request.data["identificacion"] != '':
-                    filters['identificacion'] = str(request.data["identificacion"])
+            if "numeroIdentificacion" in request.data:
+                if request.data["numeroIdentificacion"] != '':
+                    filters['numeroIdentificacion'] = str(request.data["numeroIdentificacion"])
 
             # Serializar los datos
             query = CreditoPersonas.objects.filter(**filters).order_by('-created_at')
@@ -845,7 +848,7 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
             return Response(err, status=status.HTTP_404_NOT_FOUND)
         # tomar el dato
         if request.method == 'POST':
-            tiempo = Catalogo.objects.filter(tipo='CONFIG_DURACION', nombre='DURACION_CODIGO', state=1).first().valor
+            tiempo = Catalogo.objects.filter(tipo='CONFIG_DURACION_CREDITO_APROBADO', nombre='DURACION_CODIGO_CREDITO_APROBADO', state=1).first().valor
             duracion = query.created_at + relativedelta(minutes=int(tiempo))
             if duracion > timezone.now():
                 credito = CreditoPersonas.objects.get(_id=ObjectId(query.credito_id))
@@ -919,3 +922,38 @@ def firmar(request, dct, nombreArchivo):
     archivo_pdf_para_enviar_al_cliente.write(datas)
     archivo_pdf_para_enviar_al_cliente.seek(0)
     return archivo_pdf_para_enviar_al_cliente
+
+
+def enviarCorreoAprobado(montoAprobado, email):
+    subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = montoAprobado
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>CRÉDITO APROBADO</h1>
+                        <br>
+                        <h2>Felicidades!</h2>
+                        <p>
+                        Su crédito para realizar compras en las mejores Casas Comerciales del país ha sido aprobado 
+                        por un monto de {montoAprobado} ha sido aprobado. Para acceder a su crédito, 
+                        siga los siguientes pasos:
+                        </p>
+                        <br>
+                        <ol>
+                             <li>Ingrese a <a href='https://credicompra.com/'>www.credicompra.com</a> y revise el catálogo de nuestras Casas Comerciales afiliadas.</li>
+                             <li>Acérquese a la Casa Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.</li>
+                             <li>Confirme sus datos</li>
+                             <li>Escoja sus productos y listo. Pague con su Crédito Aprobado</li>
+                        </ol>
+                        <br>
+                        <p>Si requiere asistencia personalizada, contáctenos a través del siguiente <a href='https://wa.link/5aips'>LINK</a></p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        CrediCompra – Big Puntos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)

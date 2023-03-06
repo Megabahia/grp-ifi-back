@@ -641,3 +641,39 @@ def creditoArchivos_ver_documentosFirmados_list(request):
         err = {"error": 'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel, err, logExcepcion)
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creditoArchivos_ver_documentosFirmados_list_todos(request):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + '/documentosFirmados/listar/todos',
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        logModel['dataEnviada'] = str(request.data)
+        # paginacion
+        page_size = int(request.data['page_size'])
+        page = int(request.data['page'])
+        offset = page_size * page
+        limit = offset + page_size
+        # Filtros
+        filters = {"state": "1"}
+
+        # Serializar los datos
+        query = ArchivosFirmados.objects.filter(**filters).order_by('-created_at')
+        serializer = ArchivosFirmadosSerializer(query[offset:limit], many=True)
+        new_serializer_data = {'cont': query.count(), 'info': serializer.data}
+        # envio de datos
+        return Response(new_serializer_data, status=status.HTTP_200_OK)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)

@@ -22,6 +22,8 @@ import string
 import random
 # excel
 import openpyxl
+# JSON
+import json
 # ObjectId
 from bson import ObjectId
 # logs
@@ -451,9 +453,13 @@ def factura_update_fisica(request, pk):
             serializer = FacturasFisicasSerializer(query, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                credito = CreditoPersonas.objects.filter(_id=ObjectId(request.data['credito_id'])).first()
-                credito.montoDisponible = credito.montoDisponible - float(request.data['precio'])
-                credito.save()
+                if 'Negado' == request.data['estado']:
+                    cliente = json.loads(serializer.data['cliente'])
+                    enviarCorreoNegado(cliente['correo'], serializer.data['precio'], serializer.data['precio'])
+                if 'Procesado' == request.data['estado']:
+                    credito = CreditoPersonas.objects.filter(_id=ObjectId(request.data['credito_id'])).first()
+                    credito.montoDisponible = credito.montoDisponible - float(request.data['precio'])
+                    credito.save()
                 createLog(logModel, serializer.data, logTransaccion)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
@@ -533,3 +539,33 @@ def factura_list_facturaFisica(request):
             err = {"error": 'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
+def enviarCorreoNegado(email, valorCompra, valorDesembolso):
+    print('enviado')
+    print(email, valorCompra, valorDesembolso)
+    subject, from_email, to = 'Ha ocurrido un ERROR', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = f"""{valorDesembolso}"""
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>PAGO FALLIDO</h1>
+                        <br>
+                        <h3>Lo sentimos!</h3>
+                        <br>
+                        <p>
+                        Ha ocurrido un error al intentar realizar el pago de su factura por {valorCompra} debido a {valorDesembolso} 
+                        </p>
+                        <p>
+                        Si requiere asistencia personalizada, contáctenos a través del siguiente 
+                        <a href='https://wa.link/5aips'>LINK</a> 
+                        </p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        CrediCompra – Big Puntos
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)

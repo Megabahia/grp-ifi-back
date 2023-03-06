@@ -8,6 +8,7 @@ from .views import (
     uploadEXCEL_creditosPreaprobados_empleados,
     creditoArchivos_subir_documentosFirmados_create,
     creditoArchivos_ver_documentosFirmados_list,
+    creditoArchivos_ver_documentosFirmados_list_todos,
 )
 
 app_name = 'corp_creditoArchivos'
@@ -26,4 +27,6 @@ urlpatterns = [
          name="creditoArchivos_subir_documentosFirmados_create"),
     path('documentosFirmados/listar/', creditoArchivos_ver_documentosFirmados_list,
          name="creditoArchivos_ver_documentosFirmados_list"),
+    path('documentosFirmados/listar/todos', creditoArchivos_ver_documentosFirmados_list_todos,
+         name="creditoArchivos_ver_documentosFirmados_list_todos"),
 ]

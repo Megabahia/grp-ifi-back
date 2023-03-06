@@ -1,9 +1,13 @@
 from rest_framework import serializers
 
 from .models import FacturasEncabezados, FacturasDetalles, FacturasFisicas
+# Archivos firmados
+from ..corp_creditoArchivos.models import ArchivosFirmados
+from ..corp_creditoArchivos.serializers import ArchivosFirmadosSerializer
 
 from datetime import datetime
 from django.utils import timezone
+import json
 
 
 # Actualizar factura
@@ -180,3 +184,13 @@ class FacturasFisicasSerializer(serializers.ModelSerializer):
     class Meta:
         model = FacturasFisicas
         fields = '__all__'
+
+
+    def to_representation(self, instance):
+        data = super(FacturasFisicasSerializer, self).to_representation(instance)
+        cliente = json.loads(data['cliente'])
+        # Quitar los credito de la factura
+        archivos = ArchivosFirmados.objects.get(numeroIdentificacion=cliente['identificacion'])
+        archivosSerializer = ArchivosFirmadosSerializer(archivos).data
+        data.update({"archivos": archivosSerializer})
+        return data
