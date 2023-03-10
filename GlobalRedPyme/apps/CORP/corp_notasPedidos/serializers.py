@@ -190,7 +190,10 @@ class FacturasFisicasSerializer(serializers.ModelSerializer):
         data = super(FacturasFisicasSerializer, self).to_representation(instance)
         cliente = json.loads(data['cliente'])
         # Quitar los credito de la factura
-        archivos = ArchivosFirmados.objects.get(numeroIdentificacion=cliente['identificacion'])
-        archivosSerializer = ArchivosFirmadosSerializer(archivos).data
-        data.update({"archivos": archivosSerializer})
+        try:
+            archivos = ArchivosFirmados.objects.get(numeroIdentificacion=cliente['identificacion'])
+            archivosSerializer = ArchivosFirmadosSerializer(archivos).data
+            data.update({"archivos": archivosSerializer})
+        except ArchivosFirmados.DoesNotExist:
+            data.update({"archivos": {}})
         return data

@@ -467,8 +467,8 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['fechaInicioActividades'] = dato[13].replace('"', "") if dato[13] != "NULL" else None
         data['email'] = dato[18].replace('"', "") if dato[18] != "NULL" else None
         data['estado'] = 'Nuevo'
-        data['tipoCredito'] = 'Pymes-PreAprobado'
-        data['canal'] = 'Pymes-PreAprobado'
+        data['tipoCredito'] = 'Negocio-PreAprobado'
+        data['canal'] = 'Negocio-PreAprobado'
         data['created_at'] = str(timezone_now)
         # Genera el codigo
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
@@ -511,6 +511,7 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['nombres'] = dato[9].replace('"', "") if dato[9] != "NULL" else None
         data['apellidos'] = dato[10].replace('"', "") if dato[10] != "NULL" else None
         data['nombresCompleto'] = data['nombres'] + ' ' + data['apellidos']
+        data['email'] = dato[16].replace('"', "") if dato[16] != "NULL" else None
         data['empresaIfis_id'] = empresa_financiera
         data['empresasAplican'] = dato[22]
         data['created_at'] = str(timezone_now)

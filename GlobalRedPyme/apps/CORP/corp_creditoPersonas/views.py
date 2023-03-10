@@ -231,15 +231,18 @@ def creditoPersonas_update(request, pk):
             if serializer.is_valid():
                 serializer.save()
                 createLog(logModel, serializer.data, logTransaccion)
+                usuario = serializer.data['user']
+                email = usuario['email'] if usuario['email'] is not None else serializer.data['email']
                 if serializer.data['estado'] == 'Negado':
                     # Publicar en la cola
                     publish(serializer.data)
+                    enviarCorreoNegado(serializer.data['montoLiquidar'], email)
                 if serializer.data['estado'] == 'Por Completar':
                     # Publicar en la cola
                     publish(serializer.data)
+                    enviarCorreoPorcompletar(serializer.data['montoLiquidar'], email)
                 if serializer.data['estado'] == 'Aprobado':
-                    usuario = serializer.data['user']
-                    enviarCorreoAprobado(serializer.data['montoLiquidar'], usuario['email'])
+                    enviarCorreoAprobado(serializer.data['montoLiquidar'], email)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -923,6 +926,55 @@ def firmar(request, dct, nombreArchivo):
     archivo_pdf_para_enviar_al_cliente.seek(0)
     return archivo_pdf_para_enviar_al_cliente
 
+
+def enviarCorreoNegado(montoAprobado, email):
+    subject, from_email, to = 'Su solicitud de crédito de consumo ha sido NEGADO', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = montoAprobado
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>¡LO SENTIMOS!</h1>
+                        <br>
+                        <h2>Su solicitud de crédito para realizar compras en las mejores Casas Comerciales con un crédito otorgado por una Cooperativa de Ahorro y Crédito regulada ha sido NEGADA.</h2>
+                        <p>
+                        Contáctese con su asesor a través de nuestro link de WhatsApp: <a href='https://wa.link/e8b3sa'>LINK</a>
+                        </p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        CrediCompra – Big Puntos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
+
+
+def enviarCorreoPorcompletar(montoAprobado, email):
+    subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \
+                              email
+    txt_content = montoAprobado
+    html_content = f"""
+                <html>
+                    <body>
+                        <h1>¡LO SENTIMOS!</h1>
+                        <br>
+                        <p>
+                        Su solicitud de crédito para realizar compras en las mejores Casas Comerciales con un crédito 
+                        otorgado por una Cooperativa de Ahorro y Crédito regulada ha sido DEVUELTA PARA COMPLETAR INFORMACIÓN.
+                        </p>
+                        <br>
+                        <p>Contáctese con su asesor a través de nuestro link de WhatsApp: <a href='https://wa.link/szsyad'>LINK</a></p>
+                        <br>
+                        Atentamente,
+                        <br>
+                        CrediCompra – Big Puntos
+                        <br>
+                    </body>
+                </html>
+                """
+    sendEmail(subject, txt_content, from_email, to, html_content)
 
 def enviarCorreoAprobado(montoAprobado, email):
     subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \
