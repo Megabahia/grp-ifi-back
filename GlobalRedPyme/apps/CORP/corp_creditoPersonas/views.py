@@ -232,7 +232,9 @@ def creditoPersonas_update(request, pk):
                 serializer.save()
                 createLog(logModel, serializer.data, logTransaccion)
                 usuario = serializer.data['user']
-                email = usuario['email'] if usuario['email'] is not None else serializer.data['email']
+                email = usuario['email'] if usuario else serializer.data['email']
+                if email == '' or email is None:
+                    email = serializer.data['empresaInfo']['correo']
                 if serializer.data['estado'] == 'Negado':
                     # Publicar en la cola
                     publish(serializer.data)
