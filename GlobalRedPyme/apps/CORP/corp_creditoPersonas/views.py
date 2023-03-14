@@ -10,7 +10,7 @@ from .serializers import (
     CreditoPersonasSerializer, CreditoPersonasPersonaSerializer, CodigoCreditoSerializer
 )
 # Enviar Correo
-from apps.config.util import sendEmail
+from ...config.util import sendEmail
 # Importar boto3
 import boto3
 import tempfile
@@ -155,7 +155,7 @@ def creditoPersonas_update(request, pk):
     try:
         try:
             logModel['dataEnviada'] = str(request.data)
-            query = CreditoPersonas.objects.filter(pk=ObjectId(pk), state=1).first()
+            query = CreditoPersonas.objects.filter(pk=ObjectId(pk), state=1).order_by('-created_at').first()
         except CreditoPersonas.DoesNotExist:
             errorNoExiste = {'error': 'No existe'}
             createLog(logModel, errorNoExiste, logExcepcion)
@@ -244,7 +244,8 @@ def creditoPersonas_update(request, pk):
                     publish(serializer.data)
                     enviarCorreoPorcompletar(serializer.data['montoLiquidar'], email)
                 if serializer.data['estado'] == 'Aprobado':
-                    enviarCorreoAprobado(serializer.data['montoLiquidar'], email)
+                    if serializer.data['montoLiquidar']:
+                        enviarCorreoAprobado(serializer.data['montoLiquidar'], email)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -954,7 +955,7 @@ def enviarCorreoNegado(montoAprobado, email):
 
 
 def enviarCorreoPorcompletar(montoAprobado, email):
-    subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \
+    subject, from_email, to = 'DEVUELTA PARA COMPLETAR INFORMACIÓN', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = montoAprobado
     html_content = f"""

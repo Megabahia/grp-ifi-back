@@ -455,7 +455,10 @@ def factura_update_fisica(request, pk):
                 serializer.save()
                 if 'Negado' == request.data['estado']:
                     cliente = json.loads(serializer.data['cliente'])
-                    enviarCorreoNegado(cliente['correo'], serializer.data['precio'], serializer.data['precio'])
+                    enviarCorreoNegado(cliente['correo'], serializer.data['precio'], serializer.data['precio'], request.data['observacion'])
+                if 'Procesar' == request.data['estado']:
+                    query.estado = 'Aprobado'
+                    query.save()
                 if 'Procesado' == request.data['estado']:
                     credito = CreditoPersonas.objects.filter(_id=ObjectId(request.data['credito_id'])).first()
                     credito.montoDisponible = credito.montoDisponible - float(request.data['precio'])
@@ -541,9 +544,7 @@ def factura_list_facturaFisica(request):
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
-def enviarCorreoNegado(email, valorCompra, valorDesembolso):
-    print('enviado')
-    print(email, valorCompra, valorDesembolso)
+def enviarCorreoNegado(email, valorCompra, valorDesembolso, observacion):
     subject, from_email, to = 'Ha ocurrido un ERROR', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = f"""{valorDesembolso}"""
@@ -556,6 +557,9 @@ def enviarCorreoNegado(email, valorCompra, valorDesembolso):
                         <br>
                         <p>
                         Ha ocurrido un error al intentar realizar el pago de su factura por {valorCompra} debido a {valorDesembolso} 
+                        </p>
+                        <p>
+                        Su motivo es: {observacion}
                         </p>
                         <p>
                         Si requiere asistencia personalizada, contáctenos a través del siguiente 
