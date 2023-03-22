@@ -382,7 +382,7 @@ def catalogo_listSinPaginacion(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def catalogo_filter_name(request):
     if request.method == 'POST':
         try:
@@ -399,7 +399,7 @@ def catalogo_filter_name(request):
 
 # POST FILTRO Y NOMBRE
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def catalogo_filter_listOne_name_tipo(request):
     if request.method == 'POST':
         try:
