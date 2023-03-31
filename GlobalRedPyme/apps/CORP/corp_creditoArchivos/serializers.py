@@ -7,7 +7,7 @@ from .models import (
     ArchivosFirmados,
 )
 
-from apps.CORP.corp_empresas.models import Empresas
+from ...CORP.corp_empresas.models import Empresas
 
 
 class CreditoArchivosSerializer(serializers.ModelSerializer):

@@ -84,6 +84,11 @@ def creditoPersonas_create(request):
                 if request.data['nombres'] != "":
                     request.data['nombresCompleto'] = f"""{request.data['nombres']} {request.data['apellidos']}"""
 
+            tipoCredito = 'Pymes-Normales'
+            if 'tipoCredito' in request.data:
+                if 'Pymes-PreAprobado' in request.data['tipoCredito']:
+                    tipoCredito = request.data.pop('tipoCredito')
+
             serializer = CreditoPersonasSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -91,6 +96,12 @@ def creditoPersonas_create(request):
                 if serializer.data['estado'] == 'Nuevo' and serializer.data['tipoCredito'] == 'Pymes-Normales':
                     # Publicar en la cola
                     publish(serializer.data)
+                    enviarCorreoSolicitud(request.data['email'])
+                if serializer.data['estado'] == 'Nuevo' and tipoCredito == 'Pymes-PreAprobado':
+                    credito = serializer.data
+                    credito['tipoCredito'] = 'Pymes-PreAprobado'
+                    # Publicar en la cola
+                    publish(credito)
                     enviarCorreoSolicitud(request.data['email'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             createLog(logModel, serializer.errors, logExcepcion)
@@ -189,43 +200,46 @@ def creditoPersonas_update(request, pk):
                         "password": request.data['claveFirma'],
                     }
             if 'solicitudCreditoFirmado' in request.data:
-                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'solicitudCreditoFirmado')
-                request.data['solicitudCreditoFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
-                                                                      'media',
-                                                                      'solicitudCreditoFirmado.pdf',
-                                                                      'application/pdf',
-                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
-                                                                      None
-                                                                      )
+                if request.data['solicitudCreditoFirmado'] is not None:
+                    archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'solicitudCreditoFirmado')
+                    request.data['solicitudCreditoFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                                   'media',
+                                                                                   'solicitudCreditoFirmado.pdf',
+                                                                                   'application/pdf',
+                                                                                   archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                                   None
+                                                                                   )
             if 'pagareFirmado' in request.data:
-                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'pagareFirmado')
-                request.data['pagareFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
-                                                                      'media',
-                                                                      'pagareFirmado.pdf',
-                                                                      'application/pdf',
-                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
-                                                                      None
-                                                                      )
+                if request.data['pagareFirmado'] is not None:
+                    archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'pagareFirmado')
+                    request.data['pagareFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                         'media',
+                                                                         'pagareFirmado.pdf',
+                                                                         'application/pdf',
+                                                                         archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                         None
+                                                                         )
+
             if 'contratosCuentaFirmado' in request.data:
-                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'contratosCuentaFirmado')
-                request.data['contratosCuentaFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
-                                                                      'media',
-                                                                      'contratosCuentaFirmado.pdf',
-                                                                      'application/pdf',
-                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
-                                                                      None
-                                                                      )
+                if request.data['contratosCuentaFirmado'] is not None:
+                    archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'contratosCuentaFirmado')
+                    request.data['contratosCuentaFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                                  'media',
+                                                                                  'contratosCuentaFirmado.pdf',
+                                                                                  'application/pdf',
+                                                                                  archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                                  None
+                                                                                  )
             if 'tablaAmortizacionFirmado' in request.data:
-                archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'tablaAmortizacionFirmado')
-                request.data['tablaAmortizacionFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
-                                                                      'media',
-                                                                      'tablaAmortizacionFirmado.pdf',
-                                                                      'application/pdf',
-                                                                      archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
-                                                                      None
-                                                                      )
-
-
+                if request.data['tablaAmortizacionFirmado'] is not None:
+                    archivo_pdf_para_enviar_al_cliente = firmar(request, dct, 'tablaAmortizacionFirmado')
+                    request.data['tablaAmortizacionFirmado'] = InMemoryUploadedFile(archivo_pdf_para_enviar_al_cliente,
+                                                                                    'media',
+                                                                                    'tablaAmortizacionFirmado.pdf',
+                                                                                    'application/pdf',
+                                                                                    archivo_pdf_para_enviar_al_cliente.getbuffer().nbytes,
+                                                                                    None
+                                                                                    )
 
             serializer = CreditoPersonasSerializer(query, data=request.data, partial=True)
             if serializer.is_valid():
@@ -246,6 +260,12 @@ def creditoPersonas_update(request, pk):
                 if serializer.data['estado'] == 'Aprobado':
                     if serializer.data['montoLiquidar']:
                         enviarCorreoAprobado(serializer.data['montoLiquidar'], email)
+                if 'tipoCredito' in request.data:
+                    if request.data['tipoCredito'] == '':
+                        credito = serializer.data
+                        credito['tipoCredito'] = 'Pymes-PreAprobado'
+                        # Publicar en la cola
+                        publish(credito)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -612,6 +632,41 @@ def creditoPersonas_listOne_persona(request, pk):
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creditoPersonas_listOne_usuario(request, pk):
+    timezone_now = timezone.localtime(timezone.now())
+    logModel = {
+        'endPoint': logApi + 'listOne/usuario/' + pk,
+        'modulo': logModulo,
+        'tipo': logExcepcion,
+        'accion': 'LEER',
+        'fechaInicio': str(timezone_now),
+        'dataEnviada': '{}',
+        'fechaFin': str(timezone_now),
+        'dataRecibida': '{}'
+    }
+    try:
+        try:
+            filters = {'state': 1}
+            filters['user_id'] = pk
+            filters['estado__icontains'] = request.data['estado']
+            query = CreditoPersonas.objects.filter(**filters).first()
+        except CreditoPersonas.DoesNotExist:
+            err = {"error": "No existe"}
+            createLog(logModel, err, logExcepcion)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
+        # tomar el dato
+        if request.method == 'POST':
+            serializer = CreditoPersonasSerializer(query)
+            createLog(logModel, serializer.data, logTransaccion)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        err = {"error": 'Un error ha ocurrido: {}'.format(e)}
+        createLog(logModel, err, logExcepcion)
+        return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def creditoPersonas_lecturaArchivos(request, pk):
@@ -854,7 +909,8 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
             return Response(err, status=status.HTTP_404_NOT_FOUND)
         # tomar el dato
         if request.method == 'POST':
-            tiempo = Catalogo.objects.filter(tipo='CONFIG_DURACION_CREDITO_APROBADO', nombre='DURACION_CODIGO_CREDITO_APROBADO', state=1).first().valor
+            tiempo = Catalogo.objects.filter(tipo='CONFIG_DURACION_CREDITO_APROBADO',
+                                             nombre='DURACION_CODIGO_CREDITO_APROBADO', state=1).first().valor
             duracion = query.created_at + relativedelta(minutes=int(tiempo))
             if duracion > timezone.now():
                 credito = CreditoPersonas.objects.get(_id=ObjectId(query.credito_id))
@@ -902,6 +958,7 @@ def enviarCorreoSolicitud(email):
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
 from endesive.pdf import cms
+
 
 def firmar(request, dct, nombreArchivo):
     certificado = request.data['certificado']
@@ -978,6 +1035,7 @@ def enviarCorreoPorcompletar(montoAprobado, email):
                 </html>
                 """
     sendEmail(subject, txt_content, from_email, to, html_content)
+
 
 def enviarCorreoAprobado(montoAprobado, email):
     subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \

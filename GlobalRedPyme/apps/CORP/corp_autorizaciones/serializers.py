@@ -1,13 +1,14 @@
 from rest_framework import serializers
 
-from apps.CORP.corp_autorizaciones.models import (
+from .models import (
     Autorizaciones
 )
+
 
 class AutorizacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Autorizaciones
-       	fields = '__all__'
+        fields = '__all__'
         read_only_fields = ['_id']
 
     def to_representation(self, instance):

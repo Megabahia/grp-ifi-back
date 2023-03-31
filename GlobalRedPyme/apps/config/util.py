@@ -1,6 +1,6 @@
 #lib email
 from django.core.mail import EmailMultiAlternatives
-from apps.CENTRAL.central_catalogo.models import Catalogo
+from ..CENTRAL.central_catalogo.models import Catalogo
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.mail import get_connection

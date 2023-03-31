@@ -1,7 +1,7 @@
 import boto3
 import json
 # Importar configuraciones
-from apps.config import config
+from ...config import config
 
 
 def publish(data):

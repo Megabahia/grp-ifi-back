@@ -13,14 +13,14 @@ from django.utils import timezone
 # excel
 import openpyxl
 # Utils
-from apps.utils import utils
+from ...utils import utils
 # Swagger
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 # ObjectId
 from bson import ObjectId
 # logs
-from apps.CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
+from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
 
 # declaracion variables log
 datosAux = datosProductosMDP()

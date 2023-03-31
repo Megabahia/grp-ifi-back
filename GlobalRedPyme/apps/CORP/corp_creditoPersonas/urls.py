@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from .views import (
     creditoPersonas_create,
     creditoPersonas_listOne,
@@ -8,6 +8,7 @@ from .views import (
     uploadEXCEL_creditosPreaprobados,
     uploadEXCEL_creditosPreaprobados_empleados,
     creditoPersonas_listOne_persona,
+    creditoPersonas_listOne_usuario,
     creditoPersonas_lecturaArchivos,
     creditoPersonas_creditoPreaprobado_codigo,
     creditoPersonas_codigo_creditoAprobado,
@@ -27,6 +28,7 @@ urlpatterns = [
     path('upload/creditos/preaprobados/empleados/', uploadEXCEL_creditosPreaprobados_empleados,
          name="uploadEXCEL_creditosPreaprobados_empleados"),
     path('listOne/persona/<str:pk>', creditoPersonas_listOne_persona, name="creditoPersonas_listOne_persona"),
+    path('listOne/usuario/<str:pk>', creditoPersonas_listOne_usuario, name="creditoPersonas_listOne_usuario"),
     path('lecturaArchivos/<str:pk>', creditoPersonas_lecturaArchivos, name="creditoPersonas_lecturaArchivos"),
     path('creditoPreaprobado/codigo', creditoPersonas_creditoPreaprobado_codigo,
          name="creditoPersonas_creditoPreaprobado_codigo"),

@@ -10,7 +10,7 @@ from django.utils import timezone
 # ObjectId
 from bson import ObjectId
 # logs
-from apps.CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
+from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
 
 # declaracion variables log
 datosAux = datosProductosMDP()
@@ -100,13 +100,3 @@ def firmaElectronica_list(request):
             err = {"error": 'Un error ha ocurrido: {}'.format(e)}
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
-
-

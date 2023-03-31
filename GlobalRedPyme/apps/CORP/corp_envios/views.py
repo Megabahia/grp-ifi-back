@@ -8,7 +8,7 @@ from django.utils import timezone
 # ObjectId
 from bson import ObjectId
 # logs
-from apps.CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
+from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
 
 # declaracion variables log
 datosAux = datosProductosMDP()

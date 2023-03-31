@@ -1,15 +1,16 @@
 import jsonfield
 from djongo import models
 
+
 # Create your models here.
 class Catalogo(models.Model):
     _id = models.ObjectIdField()
-    idPadre= models.ForeignKey('self', null=True, blank=True, on_delete=models.DO_NOTHING)  # Relacion Padre
-    nombre = models.CharField(max_length=255,null=True)
-    tipo = models.CharField(max_length=255,null=False)
-    tipoVariable = models.CharField(max_length=255,null=False)
-    valor = models.CharField(max_length=255,null=False)
-    descripcion = models.CharField(max_length=255,null=True)
+    idPadre = models.ForeignKey('self', null=True, blank=True, on_delete=models.DO_NOTHING)  # Relacion Padre
+    nombre = models.CharField(max_length=255, null=True)
+    tipo = models.CharField(max_length=255, null=False)
+    tipoVariable = models.CharField(max_length=255, null=False)
+    valor = models.CharField(max_length=255, null=False)
+    descripcion = models.CharField(max_length=255, null=True)
     config = jsonfield.JSONField()
     minimo = models.IntegerField(null=True, blank=True)
     maximo = models.IntegerField(null=True, blank=True)

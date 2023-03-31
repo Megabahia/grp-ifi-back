@@ -18,6 +18,7 @@ logApi = datosAux['api']
 logTransaccion = datosTipoLogAux['transaccion']
 logExcepcion = datosTipoLogAux['excepcion']
 
+
 def get_queue_url():
     print('cron')
     logModel = {

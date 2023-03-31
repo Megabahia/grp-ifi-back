@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
-from apps.CORP.corp_monedasEmpresa.models import (
+from .models import (
     MonedasEmpresa
 )
+
 
 class MonedasEmpresaSerializer(serializers.ModelSerializer):
     class Meta:

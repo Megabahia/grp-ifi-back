@@ -1,10 +1,12 @@
-from apps.PERSONAS.personas_personas.models import Personas
-from apps.CENTRAL.central_catalogo.models import Catalogo
-from apps.CORP.corp_empresas.models import Empresas
+from ...PERSONAS.personas_personas.models import Personas
+from ...CENTRAL.central_catalogo.models import Catalogo
+from ...CORP.corp_empresas.models import Empresas
 from ..corp_creditoPersonas.models import AutorizacionCredito, CreditoPersonas
 from .models import FacturasEncabezados, FacturasDetalles, FacturasFisicas
-from .serializers import FacturasSerializer, FacturasDetallesSerializer, FacturasListarSerializer, FacturaSerializer, \
+from .serializers import (
+    FacturasSerializer, FacturasDetallesSerializer, FacturasListarSerializer, FacturaSerializer,
     FacturasListarTablaSerializer, FacturasFisicasSerializer
+)
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -13,7 +15,7 @@ from django.utils import timezone
 from datetime import datetime
 from django.core import serializers
 # Enviar Correo
-from apps.config.util import sendEmail
+from ...config.util import sendEmail
 # TWILIO
 from twilio.rest import Client
 from django.conf import settings
@@ -27,7 +29,7 @@ import json
 # ObjectId
 from bson import ObjectId
 # logs
-from apps.CENTRAL.central_logs.methods import createLog, datosTipoLog, datosFacturas
+from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosFacturas
 
 # declaracion variables log
 datosAux = datosFacturas()
@@ -455,7 +457,8 @@ def factura_update_fisica(request, pk):
                 serializer.save()
                 if 'Negado' == request.data['estado']:
                     cliente = json.loads(serializer.data['cliente'])
-                    enviarCorreoNegado(cliente['correo'], serializer.data['precio'], serializer.data['precio'], request.data['observacion'])
+                    enviarCorreoNegado(cliente['correo'], serializer.data['precio'], serializer.data['precio'],
+                                       request.data['observacion'])
                 if 'Procesar' == request.data['estado']:
                     query.estado = 'Aprobado'
                     query.save()

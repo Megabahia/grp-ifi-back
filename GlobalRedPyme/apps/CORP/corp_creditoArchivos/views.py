@@ -682,7 +682,6 @@ def creditoArchivos_ver_documentosFirmados_list_todos(request):
         return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def uploadEXCEL_creditosPreaprobados_negocios(request, pk):
@@ -730,7 +729,7 @@ def uploadEXCEL_creditosPreaprobados_negocios(request, pk):
             else:
                 if len(dato) == 14:
                     resultadoInsertar = insertarDato_creditoPreaprobado_microCredito(dato, archivo.empresa_financiera,
-                                                                                 archivo.empresa_comercial)
+                                                                                     archivo.empresa_comercial)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
                         errores.append({"error": "Error en la línea " + str(contTotal) + ": " + str(resultadoInsertar)})
@@ -774,7 +773,7 @@ def insertarDato_creditoPreaprobado_microCredito(dato, empresa_financiera, empre
         # data['plazo'] = dato[3].replace('"', "") if dato[3] != "NULL" else None
         # data['interes'] = dato[4].replace('"', "") if dato[4] != "NULL" else None
         data['estado'] = 'Nuevo'
-        data['tipoCredito'] = 'Pymes-PreAprobado'
+        data['tipoCredito'] = ''
         data['canal'] = 'Pymes-PreAprobado'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
@@ -820,7 +819,7 @@ def insertarDato_creditoPreaprobado_microCredito(dato, empresa_financiera, empre
                 """
         # CodigoCreditoPreaprobado.objects.create(codigo=codigo, cedula=data['numeroIdentificacion'], monto=data['monto'])
         sendEmail(subject, txt_content, from_email, to, html_content)
-        publish(creditoSerializer.data)
+        # publish(creditoSerializer.data)
         return "Dato insertado correctamente"
     except Exception as e:
         return str(e)

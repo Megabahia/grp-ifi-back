@@ -4,6 +4,7 @@ from .models import (
     FirmaElectronica
 )
 
+
 class FirmaElectronicaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FirmaElectronica
