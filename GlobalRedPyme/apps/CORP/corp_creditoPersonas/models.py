@@ -115,6 +115,7 @@ class CreditoPersonas(models.Model):
     declaracionIva = models.FileField(blank=True, null=True, upload_to=upload_path)
     estadoCuentaTarjeta = models.FileField(blank=True, null=True, upload_to=upload_path)
     facturasPendiente = models.FileField(blank=True, null=True, upload_to=upload_path)
+    cargarOrigen = models.TextField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

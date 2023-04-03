@@ -422,6 +422,7 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['estado'] = 'Nuevo'
         data['tipoCredito'] = 'Negocio-PreAprobado'
         data['canal'] = 'Negocio-PreAprobado'
+        data['cargarOrigen'] = 'IFIS'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
         data['numeroIdentificacion'] = dato[8]
@@ -471,6 +472,7 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['estado'] = 'Nuevo'
         data['tipoCredito'] = 'Negocio-PreAprobado'
         data['canal'] = 'Negocio-PreAprobado'
+        data['cargarOrigen'] = 'IFIS'
         data['created_at'] = str(timezone_now)
         # Genera el codigo
         codigo = (''.join(random.choice(string.digits) for _ in range(int(6))))
@@ -504,6 +506,7 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['estado'] = 'Nuevo'
         data['tipoCredito'] = 'Empleado-PreAprobado'
         data['canal'] = 'Empleado-PreAprobado'
+        data['cargarOrigen'] = 'IFIS'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
         empleado = Empleados.objects.filter(identificacion=dato[8]).first()
@@ -775,6 +778,7 @@ def insertarDato_creditoPreaprobado_microCredito(dato, empresa_financiera, empre
         data['estado'] = 'Nuevo'
         data['tipoCredito'] = ''
         data['canal'] = 'Pymes-PreAprobado'
+        data['cargarOrigen'] = 'IFIS'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
         # data['user_id'] = persona.user_id
         data['numeroIdentificacion'] = dato[8]
