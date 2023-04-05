@@ -94,12 +94,15 @@ def creditoPersonas_create(request):
                 serializer.save()
                 createLog(logModel, serializer.data, logTransaccion)
                 if serializer.data['estado'] == 'Nuevo' and serializer.data['tipoCredito'] == 'Pymes-Normales':
+                    credito = serializer.data
+                    credito['cargarOrigen'] = 'BIGPUNTOS'
                     # Publicar en la cola
-                    publish(serializer.data)
+                    publish(credito)
                     enviarCorreoSolicitud(request.data['email'])
                 if serializer.data['estado'] == 'Nuevo' and tipoCredito == 'Pymes-PreAprobado':
                     credito = serializer.data
                     credito['tipoCredito'] = 'Pymes-PreAprobado'
+                    credito['cargarOrigen'] = 'BIGPUNTOS'
                     # Publicar en la cola
                     publish(credito)
                     enviarCorreoSolicitud(request.data['email'])
