@@ -266,7 +266,7 @@ def creditoPersonas_update(request, pk):
                 if 'tipoCredito' in request.data:
                     if request.data['tipoCredito'] == '':
                         credito = serializer.data
-                        credito['tipoCredito'] = 'Pymes-PreAprobado'
+                        credito['tipoCredito'] = credito['canal']
                         # Publicar en la cola
                         publish(credito)
                 return Response(serializer.data)
