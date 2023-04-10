@@ -588,7 +588,7 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['plazo'] = dato[3].replace('"', "") if dato[3] != "NULL" else None
         data['interes'] = dato[4].replace('"', "") if dato[4] != "NULL" else None
         data['estado'] = 'PreAprobado'
-        data['tipoCredito'] = 'Empleado'
+        data['tipoCredito'] = ''
         data['canal'] = 'Empleado'
         persona = Personas.objects.filter(identificacion=dato[5], state=1).first()
         data['user_id'] = persona.user_id
@@ -1077,3 +1077,4 @@ def enviarCorreoAprobado(montoAprobado, email):
                 </html>
                 """
     sendEmail(subject, txt_content, from_email, to, html_content)
+    print(email)

@@ -470,7 +470,7 @@ def insertarDato_creditoPreaprobado(dato, empresa_financiera):
         data['fechaInicioActividades'] = dato[13].replace('"', "") if dato[13] != "NULL" else None
         data['email'] = dato[18].replace('"', "") if dato[18] != "NULL" else None
         data['estado'] = 'Nuevo'
-        data['tipoCredito'] = 'Negocio-PreAprobado'
+        data['tipoCredito'] = ''
         data['canal'] = 'Negocio-PreAprobado'
         data['cargarOrigen'] = 'IFIS'
         data['created_at'] = str(timezone_now)
@@ -504,7 +504,7 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
         data['tipoPersona'] = dato[6].replace('"', "") if dato[6] != "NULL" else None
         data['estadoCivil'] = dato[7].replace('"', "") if dato[7] != "NULL" else None
         data['estado'] = 'Nuevo'
-        data['tipoCredito'] = 'Empleado-PreAprobado'
+        data['tipoCredito'] = ''
         data['canal'] = 'Empleado-PreAprobado'
         data['cargarOrigen'] = 'IFIS'
         # persona = Personas.objects.filter(identificacion=dato[5],state=1).first()
