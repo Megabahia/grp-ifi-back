@@ -262,7 +262,7 @@ def creditoPersonas_update(request, pk):
                     enviarCorreoPorcompletar(serializer.data['montoLiquidar'], email)
                 if serializer.data['estado'] == 'Aprobado':
                     if serializer.data['montoLiquidar']:
-                        enviarCorreoAprobado(serializer.data['montoLiquidar'], email)
+                        enviarCorreoAprobado(serializer.data['montoAprobado'], email)
                 if 'tipoCredito' in request.data:
                     if request.data['tipoCredito'] == '':
                         credito = serializer.data
@@ -1045,24 +1045,45 @@ def enviarCorreoPorcompletar(montoAprobado, email):
 
 
 def enviarCorreoAprobado(montoAprobado, email):
-    subject, from_email, to = 'Su solicitud de crédito de consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", \
-                              email
-    txt_content = montoAprobado
+    subject, from_email, to = 'Su Solicitud de Crédito de Consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", email
+    txt_content = f"""
+    CRÉDITO DE CONSUMO APROBADO
+    
+    Felicidades!
+    Su Solicitud de Crédito para realizar compras en los mejores Locales Comerciales del país
+    ha sido APROBADA por un monto de {montoAprobado}.
+    
+    Para acceder a su Crédito, realice los siguientes pasos:
+    
+    Ingrese a www.credicompra.com y revise el catálogo de nuestros Locales Comerciales afiliados.
+    Acérquese al Local Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.
+    Confirme sus datos
+    Escoja sus productos y listo. Pague con su Crédito Aprobado
+    
+    Si requiere asistencia personalizada, contáctenos a través del siguiente <a href='https://wa.link/5aips'>LINK</a>
+    
+    Atentamente,
+    
+    CrediCompra – Big Puntos
+    """
     html_content = f"""
                 <html>
                     <body>
-                        <h1>CRÉDITO APROBADO</h1>
+                        <h1>CRÉDITO DE CONSUMO APROBADO</h1>
                         <br>
                         <h2>Felicidades!</h2>
                         <p>
-                        Su crédito para realizar compras en las mejores Casas Comerciales del país ha sido aprobado 
-                        por un monto de {montoAprobado} ha sido aprobado. Para acceder a su crédito, 
-                        siga los siguientes pasos:
+                        Su Solicitud de Crédito para realizar compras en los mejores Locales Comerciales del país
+                         ha sido <b>APROBADA</b> por un monto de {montoAprobado}.
+                        </p>
+                        <br>
+                        <p>
+                        <b>Para acceder a su Crédito, realice los siguientes pasos:</b>
                         </p>
                         <br>
                         <ol>
-                             <li>Ingrese a <a href='https://credicompra.com/'>www.credicompra.com</a> y revise el catálogo de nuestras Casas Comerciales afiliadas.</li>
-                             <li>Acérquese a la Casa Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.</li>
+                             <li>Ingrese a <a href='https://credicompra.com/'>www.credicompra.com</a> y revise el catálogo de nuestros Locales Comerciales afiliados.</li>
+                             <li>Acérquese al Local Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.</li>
                              <li>Confirme sus datos</li>
                              <li>Escoja sus productos y listo. Pague con su Crédito Aprobado</li>
                         </ol>
