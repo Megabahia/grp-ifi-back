@@ -559,7 +559,7 @@ def enviarCorreoNegado(email, valorCompra, valorDesembolso, observacion):
                         <h3>Lo sentimos!</h3>
                         <br>
                         <p>
-                        Ha ocurrido un error al intentar realizar el pago de su factura por {valorCompra} debido a {valorDesembolso} 
+                        Ha ocurrido un error al intentar realizar el pago de su factura por {valorCompra} debido a {observacion} 
                         </p>
                         <p>
                         Su motivo es: {observacion}

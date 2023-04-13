@@ -91,8 +91,11 @@ class login(ObtainAuthToken):
 
                     try:
                         credito = CreditoPersonas.objects.filter(user_id=str(user.pk), state=1).order_by('-created_at').first()
-                        if credito.estado == 'Por Completar' or credito.estado == 'Negado':
-                            creditoAprobado = 8
+                        if credito is not None:
+                            if credito.estado == 'Por Completar' or credito.estado == 'Negado':
+                                creditoAprobado = 8
+                            else:
+                                creditoAprobado = 0
                         else:
                             creditoAprobado = 0
                     except Exception as e:
