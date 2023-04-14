@@ -237,7 +237,7 @@ def uploadEXCEL_creditosPreaprobados(request, pk):
                 continue
             else:
                 if len(dato) == 21:
-                    resultadoInsertar = insertarDato_creditoPreaprobado(dato, archivo.empresa_financiera)
+                    resultadoInsertar = insertarDato_creditoPreaprobadoNegocio(dato, archivo.empresa_financiera)
                     if resultadoInsertar != 'Dato insertado correctamente':
                         contInvalidos += 1
                         errores.append({"error": "Error en la línea " + str(contTotal) + ": " + str(resultadoInsertar)})
@@ -406,7 +406,7 @@ def uploadEXCEL_creditosPreaprobados_empleados(request, pk):
 
 
 # INSERTAR DATOS EN LA BASE INDIVIDUAL
-def insertarDato_creditoPreaprobado(dato, empresa_financiera):
+def insertarDato_creditoPreaprobadoNegocio(dato, empresa_financiera):
     try:
         timezone_now = timezone.localtime(timezone.now())
         data = {}
@@ -537,9 +537,20 @@ def insertarDato_creditoPreaprobado_empleado(dato, empresa_financiera):
 
 
 def enviarCodigoCorreo(codigo, monto, email):
-    subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
-                              email
-    txt_content = codigo
+    subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", email
+    txt_content = f"""
+        Se acaba de generar el codigo de verificación de su cuenta
+        
+        USTED TIENE UN CREDITO PRE-APROBADO DE $ {monto}, PARA QUE REALICE LA COMPRA EN www.credicompra.com,
+        Por favor ingrese a la plataforma www.credicompra.com y disfrute de su compra: Link
+        
+        {config.API_FRONT_END_BIGPUNTOS}/pages/preApprovedCreditConsumer
+        
+        Al ingresar por favor digitar el siguiente código: {codigo} en la siguiente pagina
+
+        Saludos,
+        Equipo Global Red Pymes.
+    """
     html_content = """
             <html>
                 <body>
@@ -564,7 +575,16 @@ def enviarCodigoCorreo(codigo, monto, email):
 def enviarCodigoCorreoMicroCredito(razonSocial, codigo, monto, email):
     subject, from_email, to = 'Generacion de codigo de credito pre-aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = codigo
+    txt_content = f"""
+        Se acaba de generar el codigo de verificación de su cuenta
+        {razonSocial} tienes una LINEA DE CRÉDITO PRE-APROBADO PARA PAGO A PROVEEDORES DE {monto}
+        
+        Tu código para acceder a tu crédito pre-aprobado PARA PAGO A PROVEEDORES es: {codigo},
+         ingresa al siguiente link y registra tus datos. Crea tu cuenta: {config.API_FRONT_END_SANJOSE}
+        
+        Saludos,
+        Equipo Global Red Pymes.
+    """
     html_content = f"""
                 <html>
                     <body>
@@ -797,7 +817,22 @@ def insertarDato_creditoPreaprobado_microCredito(dato, empresa_financiera, empre
         creditoSerializer = CreditoPersonasSerializer(creditoPreAprobado)
         subject, from_email, to = 'Usted tiene una LÍNEA DE CRÉDITO PRE-APROBADA PARA PAGAR A SUS PROVEEDORES', "08d77fe1da-d09822@inbox.mailtrap.io", \
                                   dato[10]
-        txt_content = codigo
+        txt_content = f"""
+            Estimad@ {data['nombresCompleto']}
+            
+            Nos complace comunicarle que usted tiene una LÍNEA DE CRÉDITO PRE-APROBADA por $ {data['monto']}
+            para que pueda realizar pagos a sus PROVEEDORES con un crédito otorgado {dato[13]}
+            
+            Para acceder a su Línea de Crédito para pago a proveedores haga click en el siguiente enlace:
+            {config.API_FRONT_END_CENTRAL}/pages/preApprovedCreditLine
+                
+            Su código de ingreso es: {codigo}
+            
+            Crédito Pagos en la mejor opción de crecimiento para su negocio
+            
+            Saludos,
+            Crédito Pagos – Big Puntos
+        """
         html_content = f"""
                 <html>
                     <body>

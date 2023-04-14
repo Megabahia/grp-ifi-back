@@ -225,7 +225,20 @@ def firmar(request, query):
 def enviarNegadoPago(email, monto):
     subject, from_email, to = 'RAZÓN POR LA QUE SE NIEGA EL PAGO A PROVEEDORES', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = monto
+    txt_content = f"""
+        PAGO A PROVEEDORES - CRÉDITO PAGOS
+        
+        Lo sentimos!!
+        
+        La transferencia por ${monto} DE LA FACTURA A PAGAR ha sido rechazada. 
+        Por favor revise sus fondos e intente de nuevo.
+        
+        Si cree que es un error, contáctese con su agente a través de https://walink.co/b5e9c0
+        
+        Atentamente,
+        
+        Global RedPyme – Crédito Pagos
+    """
     html_content = f"""
                 <html>
                     <body>
@@ -252,7 +265,19 @@ def enviarNegadoPago(email, monto):
 def enviarProcesandoPago(email, monto):
     subject, from_email, to = 'Transferencia exitosa', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = monto
+    txt_content = f"""
+        PAGO A PROVEEDORES - CRÉDITO PAGOS
+        
+        FELICIDADES!!
+        
+        La transferencia por ${monto} ha sido realizada con éxito, 
+        adjuntamos el comprobante del pago realizado. 
+        En 24 horas será acreditado a la cuenta destino.
+                            
+        Atentamente,
+        
+        Global RedPyme – Crédito Pagos
+    """
     html_content = f"""
                 <html>
                     <body>

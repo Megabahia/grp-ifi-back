@@ -829,7 +829,17 @@ def prueba(request):
 def enviarCodigoCorreoMicroCredito(codigo, email):
     subject, from_email, to = 'Generación de código para crédito aprobado', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = codigo
+    txt_content = f"""
+        Su código de seguridad para consulta de créditos se ha generado
+                            
+        Hola!
+        
+        Su código de seguridad para consulta de créditos es: {codigo}
+        
+        Atentamente,
+        
+        CrediCompra-Big Puntos.
+    """
     html_content = f"""
                 <html>
                     <body>
@@ -997,7 +1007,17 @@ def firmar(request, dct, nombreArchivo):
 def enviarCorreoNegado(montoAprobado, email):
     subject, from_email, to = 'Su solicitud de crédito de consumo ha sido NEGADO', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = montoAprobado
+    txt_content = f"""
+        <h1>¡LO SENTIMOS!</h1>
+                            
+        Su solicitud de crédito para realizar compras en las mejores Casas Comerciales con un crédito otorgado por una Cooperativa de Ahorro y Crédito regulada ha sido NEGADA.
+        
+        Contáctese con su asesor a través de nuestro link de WhatsApp: https://wa.link/e8b3sa
+        
+        Atentamente,
+        
+        CrediCompra – Big Puntos
+    """
     html_content = f"""
                 <html>
                     <body>
@@ -1021,7 +1041,18 @@ def enviarCorreoNegado(montoAprobado, email):
 def enviarCorreoPorcompletar(montoAprobado, email):
     subject, from_email, to = 'DEVUELTA PARA COMPLETAR INFORMACIÓN', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
-    txt_content = montoAprobado
+    txt_content = f"""
+        ¡LO SENTIMOS!
+                                                    
+        Su solicitud de crédito para realizar compras en las mejores Casas Comerciales con un crédito 
+        otorgado por una Cooperativa de Ahorro y Crédito regulada ha sido DEVUELTA PARA COMPLETAR INFORMACIÓN.
+                                
+        Contáctese con su asesor a través de nuestro link de WhatsApp: https://wa.link/szsyad
+        
+        Atentamente,
+        
+        CrediCompra – Big Puntos
+    """
     html_content = f"""
                 <html>
                     <body>
