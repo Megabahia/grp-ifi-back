@@ -946,7 +946,7 @@ def creditoPersonas_validar_codigo_creditoAprobado(request):
 
 
 def enviarCorreoSolicitud(email):
-    subject, from_email, to = 'Solicitud de Crédito Recibida – Crédito Pagos', "08d77fe1da-d09822@inbox.mailtrap.io", \
+    subject, from_email, to = 'Solicitud de Línea de Crédito Recibida', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = f"""
                         Global RedPyme - Crédito Pagos ha recibido su solicitud, estaremos en contacto con usted a la brevedad posible.
@@ -957,6 +957,7 @@ def enviarCorreoSolicitud(email):
     html_content = f"""
                 <html>
                     <body>
+                        <h1>Solicitud de Línea de Crédito Recibida</h1>
                         <p>Global RedPyme - Crédito Pagos ha recibido su solicitud, estaremos en contacto con usted a la brevedad posible.</p>
                         <br>
                         <br>
@@ -1076,9 +1077,9 @@ def enviarCorreoPorcompletar(montoAprobado, email):
 
 
 def enviarCorreoAprobado(montoAprobado, email):
-    subject, from_email, to = 'Su Solicitud de Crédito de Consumo ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", email
+    subject, from_email, to = 'Su Solicitud de Línea de Crédito ha sido APROBADA', "08d77fe1da-d09822@inbox.mailtrap.io", email
     txt_content = f"""
-    CRÉDITO DE CONSUMO APROBADO
+    LÍNEA DE CRÉDITO PARA PAGO A PROVEEDORES Y/O EMPLEADOS APROBADA
     
     Felicidades!
     Su Solicitud de Crédito para realizar compras en los mejores Locales Comerciales del país
@@ -1086,44 +1087,48 @@ def enviarCorreoAprobado(montoAprobado, email):
     
     Para acceder a su Crédito, realice los siguientes pasos:
     
-    Ingrese a www.credicompra.com y revise el catálogo de nuestros Locales Comerciales afiliados.
-    Acérquese al Local Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.
-    Confirme sus datos
-    Escoja sus productos y listo. Pague con su Crédito Aprobado
+    1. Ingrese a: https://grp-clientes.financieradevittoria.com  y cargue su firma electrónica en nuestra plataforma.
+    Recuerde que al hacerlo, autoriza a la Plataforma y Cooperativa de Ahorro y Crédito a realizar movimientos desde su cuenta con el único fin de completar el proceso del PAGO A SUS PROVEEDORES Y/O EMPLEADOS.
+    
+    Crédito Pagos es la mejor opción para el crecimiento de su negocio
     
     Si requiere asistencia personalizada, contáctenos a través del siguiente <a href='https://wa.link/5aips'>LINK</a>
     
     Atentamente,
     
-    CrediCompra – Big Puntos
+    Global RedPyme – Crédito Pagos
     """
     html_content = f"""
                 <html>
                     <body>
-                        <h1>CRÉDITO DE CONSUMO APROBADO</h1>
+                        <h1>LÍNEA DE CRÉDITO PARA PAGO A PROVEEDORES Y/O EMPLEADOS APROBADA</h1>
                         <br>
                         <h2>Felicidades!</h2>
                         <p>
-                        Su Solicitud de Crédito para realizar compras en los mejores Locales Comerciales del país
-                         ha sido <b>APROBADA</b> por un monto de {montoAprobado}.
+                        Su Solicitud de Línea de Crédito para realizar pagos a sus proveedores y/o empleados ha sido
+                         <b>APROBADA</b> por un monto de {montoAprobado}.
                         </p>
                         <br>
                         <p>
-                        <b>Para acceder a su Crédito, realice los siguientes pasos:</b>
+                        <b>Para acceder a su Línea de Crédito para realizar pagos a proveedores y/o empleados, realice lo siguiente:</b>
                         </p>
                         <br>
                         <ol>
-                             <li>Ingrese a <a href='https://credicompra.com/'>www.credicompra.com</a> y revise el catálogo de nuestros Locales Comerciales afiliados.</li>
-                             <li>Acérquese al Local Comercial de su preferencia y solicite realizar la compra con su crédito Aprobado.</li>
-                             <li>Confirme sus datos</li>
-                             <li>Escoja sus productos y listo. Pague con su Crédito Aprobado</li>
+                             <li>Ingrese a: <a href='https://grp-clientes.financieradevittoria.com'>https://grp-clientes.financieradevittoria.com</a>
+                             y cargue su firma electrónica en nuestra plataforma. Recuerde que al hacerlo, autoriza a
+                              la Plataforma y Cooperativa de Ahorro y Crédito a realizar movimientos desde su cuenta con el único fin de completar el proceso del PAGO A SUS PROVEEDORES Y/O EMPLEADOS.
+                             </li>
                         </ol>
                         <br>
-                        <p>Si requiere asistencia personalizada, contáctenos a través del siguiente <a href='https://wa.link/5aips'>LINK</a></p>
+                        <p>
+                        <b>Crédito Pagos es la mejor opción para el crecimiento de su negocio</b>
+                        </p>
+                        <br>
+                        <p>Si requiere asistencia personalizada, contáctenos a través del siguiente <a href='https://wa.link/pcs3ll'>LINK</a></p>
                         <br>
                         Atentamente,
                         <br>
-                        CrediCompra – Big Puntos
+                        Global RedPyme – Crédito Pagos
                         <br>
                     </body>
                 </html>
