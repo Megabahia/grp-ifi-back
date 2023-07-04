@@ -269,6 +269,12 @@ def creditoPersonas_update(request, pk):
                         credito['tipoCredito'] = credito['canal']
                         # Publicar en la cola
                         publish(credito)
+                print(serializer.data['alcance'])
+                print(serializer.data['enviado'])
+                if serializer.data['alcance'] == None and serializer.data['enviado'] == 0:
+                    credito = serializer.data
+                    credito['alcance'] = 'OMNIGLOBAL'
+                    publish(credito)
                 return Response(serializer.data)
             createLog(logModel, serializer.errors, logExcepcion)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
