@@ -119,6 +119,7 @@ class CreditoPersonas(models.Model):
     alcance = models.TextField(null=True, blank=True)
     enviado = models.SmallIntegerField(default=0)
     autorizacion = models.FileField(blank=True, null=True, upload_to=upload_path)
+    empresaEmpleado = jsonfield.JSONField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
