@@ -47,6 +47,22 @@ def get_queue_url():
             body = json.loads(message.body)
             jsonRequest = json.loads(body['Message'])
             _idCredidPerson = jsonRequest.pop('_id')
+
+            if 'solicitudCredito' in jsonRequest:
+                jsonRequest.pop('solicitudCredito')
+            if 'cedulaGarante' in jsonRequest:
+                jsonRequest.pop('cedulaGarante')
+            if 'papeletaVotacionGarante' in jsonRequest:
+                jsonRequest.pop('papeletaVotacionGarante')
+            if 'fotoGarante' in jsonRequest:
+                jsonRequest.pop('fotoGarante')
+            if 'impuestoPredialGarante' in jsonRequest:
+                jsonRequest.pop('impuestoPredialGarante')
+            if 'matriculaVehiculoGarante' in jsonRequest:
+                jsonRequest.pop('matriculaVehiculoGarante')
+            if 'planillaDomicilioGarante' in jsonRequest:
+                jsonRequest.pop('planillaDomicilioGarante')
+
             # Por el momento crea los nuevos registros que llegan sqs
             query = CreditoPersonas.objects.filter(external_id=_idCredidPerson, state=1).first()
             credito = ''

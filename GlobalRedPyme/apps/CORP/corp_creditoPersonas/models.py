@@ -120,6 +120,7 @@ class CreditoPersonas(models.Model):
     enviado = models.SmallIntegerField(default=0)
     autorizacion = models.FileField(blank=True, null=True, upload_to=upload_path)
     empresaEmpleado = jsonfield.JSONField()
+    activarMenu = models.SmallIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
