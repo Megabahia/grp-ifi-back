@@ -7,7 +7,6 @@ from .models import CreditoPersonas
 from bson import ObjectId
 # logs
 from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
-from ...config.util import sendEmail
 
 # declaracion variables log
 datosAux = datosProductosMDP()
@@ -111,41 +110,11 @@ def get_queue_url():
                 CreditoPersonas.objects.filter(external_id=query.external_id).update(**jsonRequest)
                 credito = query
                 print('se guardo')
-            codigo = jsonRequest['codigo']
-            monto = jsonRequest['monto']
-            email = jsonRequest['email']
 
             # Crear objeto en firebase para las notificaciones
             config.FIREBASE_DB.collection('creditosPersonas').document(str(credito._id)).set(jsonRequest)
             # Borramos SQS
             message.delete()
-            subject, from_email, to = 'Crédito de consumo Pre-Aprobado', "credicompra.bigpuntos@corporacionomniglobal.com", \
-                                      email
-            txt_content = codigo
-            html_content = f"""
-                   <html>
-                       <body>
-                           <h1>PRE-CALIFICACIÓN DE CRÉDITO DE CONSUMO</h1>
-
-                           <p>
-                            Usted Tiene un crédito Pre-Aprobado de $ {monto} para que realice compras en los mejores Locales Comerciales del país.
-                           </p>
-                           <br>
-                           <p>Ingrese al siguiente link y acceda a su crédito: 
-                           <a href='{config.API_FRONT_END_BIGPUNTOS}/pages/preApprovedCreditConsumer'>Link</a>
-                           </p>
-
-                           Su código de ingreso es: {codigo}<br>
-                           <br>
-                           Si su enlace no funciona, copia el siguiente link en una ventana del navegador: {config.API_FRONT_END_BIGPUNTOS}/pages/preApprovedCreditConsumer
-
-                           Saludos,<br>
-                           Equipo Global Red Pymes.<br>
-                       </body>
-                   </html>
-                   """
-            # CodigoCreditoPreaprobado.objects.create(codigo=codigo, cedula=data['numeroIdentificacion'], monto=data['monto'])
-            sendEmail(subject, txt_content, from_email, to, html_content)
     except Exception as e:
         err = {"error": 'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel, err, logExcepcion)
