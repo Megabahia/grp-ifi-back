@@ -5,6 +5,8 @@ from ...config import config
 from .serializers import CreditoPersonasSerializer
 from .models import CreditoPersonas
 from bson import ObjectId
+# Enviar Correo
+from ...config.util import sendEmail
 # logs
 from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
 
@@ -111,10 +113,65 @@ def get_queue_url():
                 credito = query
                 print('se guardo')
 
+            email = jsonRequest['email']
+            nombresCompleto = jsonRequest['nombresCompleto']
+            nombreIfi = jsonRequest['nombreIfi']
+            monto = jsonRequest['monto']
+            codigoPreaprobado = jsonRequest['codigoPreaprobado']
+
             # Crear objeto en firebase para las notificaciones
             config.FIREBASE_DB.collection('creditosPersonas').document(str(credito._id)).set(jsonRequest)
             # Borramos SQS
             message.delete()
+
+            subject, from_email, to = 'Usted tiene una  Línea de Crédito Preaprobada para su Negocio', "credicompra.bigpuntos@corporacionomniglobal.com", \
+                                      email
+            txt_content = f"""
+                    FELICIDADES!
+
+                    Estimad@ {nombresCompleto}
+
+                    Nos complace comunicarle que usted tiene una LÍNEA DE CRÉDITO PREAPROBADA otorgada por {nombreIfi} de $ {monto}
+                    para que pueda realizar pagos a sus proveedores y/o empleados.
+
+                    Para acceder a su Línea de Crédito y realizar pagos a sus proveedores y/o empleados, por favor haga click en
+                     el siguiente enlace: LINK
+
+                    {codigoPreaprobado}
+                    """
+            html_content = f"""
+                            <html>
+                                <body>
+                                    <h1><b>FELICIDADES!</b></h1>
+                                    <br>
+                                    <p>Estimad@ {nombresCompleto}</p>
+                                    <br>
+                                    <p>
+                                     Nos complace comunicarle que usted tiene una LÍNEA DE CRÉDITO PREAPROBADA otorgada por {email} 
+                                     de $ {monto} para que pueda realizar pagos a sus proveedores y/o empleados.
+                                    </p>
+                                    <br>
+                                    <p>
+                                    Para acceder a su Línea de Crédito y realizar pagos a sus proveedores y/o empleados, por favor haga click en el siguiente enlace:
+                                    <a href='{config.API_FRONT_END_CENTRAL}/pages/preApprovedCreditLine?email={email}&nombre={nombresCompleto}'>Link</a>
+                                    </p>
+
+                                    <p>Su código de ingreso es: {codigoPreaprobado}</p>
+                                    <br>
+                                    <br>
+                                    <p>
+                                    <b>Crédito Pagos en la mejor opción de crecimiento para su negocio</b>
+                                    </p>
+                                    <br>
+                                    Saludos,<br>
+                                    Crédito Pagos – Big Puntos<br>
+                                </body>
+                            </html>
+                            """
+            # CodigoCreditoPreaprobado.objects.create(codigo=codigo, cedula=data['numeroIdentificacion'], monto=data['monto'])
+            sendEmail(subject, txt_content, from_email, to, html_content)
+
+
     except Exception as e:
         err = {"error": 'Un error ha ocurrido: {}'.format(e)}
         createLog(logModel, err, logExcepcion)
