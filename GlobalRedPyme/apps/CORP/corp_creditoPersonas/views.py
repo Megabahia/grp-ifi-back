@@ -717,7 +717,7 @@ def creditoPersonas_lecturaArchivos(request, pk):
 
 def obtenerDatosArchivos(nombreArchivo):
     # Function invokes
-    jobId = InvokeTextDetectJob('globalredpymes', nombreArchivo)
+    jobId = InvokeTextDetectJob(env.str('AWS_STORAGE_BUCKET_NAME'), nombreArchivo)
     print("Started job with id: {}".format(jobId))
     respuesta = {}
     if (CheckJobComplete(jobId)):
@@ -997,7 +997,7 @@ def firmar(request, dct, nombreArchivo):
     with tempfile.TemporaryDirectory() as d:
         ruta = d + 'SOLICITUD_REMATRICULA_DE_.pdf'
         s3 = boto3.resource('s3')
-        archivo = s3.meta.client.download_file('globalredpymes', str(request.data[nombreArchivo]), ruta)
+        archivo = s3.meta.client.download_file(env.str('AWS_STORAGE_BUCKET_NAME'), str(request.data[nombreArchivo]), ruta)
     contrasenia = request.data['claveFirma']
     p12 = pkcs12.load_key_and_certificates(
         certificado.read(), contrasenia.encode("ascii"), backends.default_backend()

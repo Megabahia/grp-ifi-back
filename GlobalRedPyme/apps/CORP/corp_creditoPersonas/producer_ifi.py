@@ -2,6 +2,7 @@ import boto3
 import json
 # Importar configuraciones
 from ...config import config
+import environ
 
 
 def publish(data):
@@ -64,7 +65,9 @@ def publish(data):
             data['external_id'] = data['_id']
     if 'autorizacion' in data:
         autorizacion = data.pop('autorizacion')
-        data['autorizacion'] = str(autorizacion).replace('https://globalredpymes.s3.amazonaws.com/', '')
+        env = environ.Env()
+        environ.Env.read_env()  # LEE ARCHIVO .ENV
+        data['autorizacion'] = str(autorizacion).replace(env.str('URL_BUCKET'), '')
         if data['autorizacion'] == 'None':
             data.pop('autorizacion')
 

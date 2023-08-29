@@ -8,5 +8,5 @@ def get_db_handle(db_name, host, port, username, password):
                          username=username,
                          password=password
                          )
-    db_handle = client['globalRedPymes']
+    db_handle = client[env.str('AWS_STORAGE_BUCKET_NAME')]
     return db_handle, client

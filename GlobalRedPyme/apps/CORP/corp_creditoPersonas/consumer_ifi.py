@@ -115,7 +115,7 @@ def get_queue_url():
 
             email = jsonRequest['email']
             nombresCompleto = jsonRequest['nombresCompleto']
-            nombreIfi = jsonRequest['nombreIfi']
+            nombreIfi = jsonRequest['empresaInfo']['nombreIfi']
             monto = jsonRequest['monto']
             codigoPreaprobado = jsonRequest['codigoPreaprobado']
 
