@@ -1,5 +1,7 @@
 import boto3
 import json
+
+from .s3 import replicate
 # Importar configuraciones
 from ...config import config
 import environ
@@ -14,52 +16,18 @@ def publish(data):
         region_name=config.AWS_REGION_NAME,
     )
 
-    if 'reporteBuro' in data:
-        data.pop('reporteBuro')
-    if 'identificacion' in data:
-        data.pop('identificacion')
-    if 'papeletaVotacion' in data:
-        data.pop('papeletaVotacion')
-    if 'identificacionConyuge' in data:
-        data.pop('identificacionConyuge')
-    if 'papeletaVotacionConyuge' in data:
-        data.pop('papeletaVotacionConyuge')
-    if 'planillaLuzNegocio' in data:
-        data.pop('planillaLuzNegocio')
-    if 'planillaLuzDomicilio' in data:
-        data.pop('planillaLuzDomicilio')
-    if 'facturas' in data:
-        data.pop('facturas')
-    if 'matriculaVehiculo' in data:
-        data.pop('matriculaVehiculo')
-    if 'impuestoPredial' in data:
-        data.pop('impuestoPredial')
-    if 'buroCredito' in data:
-        data.pop('buroCredito')
-    if 'evaluacionCrediticia' in data:
-        data.pop('evaluacionCrediticia')
-    if 'ruc' in data:
-        data.pop('ruc')
-    if 'rolesPago' in data:
-        data.pop('rolesPago')
-    if 'panillaIESS' in data:
-        data.pop('panillaIESS')
-    if 'mecanizadoIess' in data:
-        data.pop('mecanizadoIess')
-    if 'fotoCarnet' in data:
-        data.pop('fotoCarnet')
-    if 'solicitudCredito' in data:
-        data.pop('solicitudCredito')
-    if 'buroCreditoIfis' in data:
-        data.pop('buroCreditoIfis')
-    if 'documentoAprobacion' in data:
-        data.pop('documentoAprobacion')
-    if 'pagare' in data:
-        data.pop('pagare')
-    if 'contratosCuenta' in data:
-        data.pop('contratosCuenta')
-    if 'tablaAmortizacion' in data:
-        data.pop('tablaAmortizacion')
+    campos_a_eliminar = [
+        'reporteBuro', 'identificacion', 'papeletaVotacion', 'identificacionConyuge',
+        'papeletaVotacionConyuge', 'planillaLuzNegocio', 'planillaLuzDomicilio', 'facturas',
+        'matriculaVehiculo', 'impuestoPredial', 'buroCredito', 'evaluacionCrediticia',
+        'ruc', 'rolesPago', 'panillaIESS', 'mecanizadoIess', 'fotoCarnet',
+        'solicitudCredito', 'buroCreditoIfis', 'documentoAprobacion', 'pagare',
+        'contratosCuenta', 'tablaAmortizacion'
+    ]
+
+    for campo in campos_a_eliminar:
+        if campo in data:
+            data.pop(campo)
     if 'external_id' in data:
         if data['external_id'] is None:
             data['external_id'] = data['_id']
@@ -67,9 +35,10 @@ def publish(data):
         autorizacion = data.pop('autorizacion')
         env = environ.Env()
         environ.Env.read_env()  # LEE ARCHIVO .ENV
-        data['autorizacion'] = str(autorizacion).replace(env.str('URL_BUCKET'), '')
-        if data['autorizacion'] == 'None':
-            data.pop('autorizacion')
+        autorizacion = str(autorizacion).replace(env.str('URL_BUCKET'), '')
+        if autorizacion != 'None':
+            data['autorizacion'] = autorizacion
+            replicate(autorizacion)
 
     response = snsClient.publish(
         TopicArn=topicArn,
