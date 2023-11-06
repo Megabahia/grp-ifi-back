@@ -1,7 +1,9 @@
 from djongo import models
 
 
-# Create your models here.
+# Nube: ifi
+# PORTALES: CENTER, PERSONAS, CORP, IFIS
+# Este archivo sirve para conectar el backend de la nube de bigpuntos con la base datos de corp
 class MovimientoCobros(models.Model):
     _id = models.ObjectIdField()
     autorizacion = models.IntegerField(null=True, blank=True)

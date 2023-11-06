@@ -23,7 +23,7 @@ from apps.config.util import sendEmail
 # ObjectId
 from bson import ObjectId
 # logs
-from apps.CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
+from ...CENTRAL.central_logs.methods import createLog, datosTipoLog, datosProductosMDP
 
 # declaracion variables log
 datosAux = datosProductosMDP()
@@ -41,6 +41,11 @@ logExcepcion = datosTipoLogAux['excepcion']
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def pagoProveedores_create(request):
+    """
+    ESte metodo sirve para crear un proveedor en la tabla proveedor de la base datos corp
+    @type request: El campo request recibe los campo de la tabla proveedores
+    @rtype: DEvuelve el registro creado, caso contrario devuelve el error generado
+    """
     request.POST._mutable = True
     timezone_now = timezone.localtime(timezone.now())
     logModel = {
@@ -76,6 +81,12 @@ def pagoProveedores_create(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def pagoProveedores_update(request, pk):
+    """
+    ESte metodo sirve para actualizar un proveedor en la tabla proveedor de la base datos corp
+    @param pk: El campo pk recibe el id del proveedor
+    @type request: El campo request recibe los campo de la tabla proveedores
+    @rtype: DEvuelve el registro actualizar, caso contrario devuelve el error generado
+    """
     request.POST._mutable = True
     timezone_now = timezone.localtime(timezone.now())
     logModel = {
@@ -143,6 +154,11 @@ def pagoProveedores_update(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def pagoProveedores_list(request):
+    """
+    ESte metodo sirve para listar un proveedor en la tabla proveedor de la base datos corp
+    @type request: El campo request recibe empresa_id, page, page_size
+    @rtype: DEvuelve una lista proveedores, caso contrario devuelve el error generado
+    """
     timezone_now = timezone.localtime(timezone.now())
     logModel = {
         'endPoint': logApi + 'list/',
@@ -181,11 +197,19 @@ def pagoProveedores_list(request):
             createLog(logModel, err, logExcepcion)
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
+
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
 from endesive.pdf import cms
 
+
 def firmar(request, query):
+    """
+    Este metodo sirve para firmar documentos
+    @type query: El campo query recibe la consulta de la tabla pago proveedores
+    @type request: El campo request recibe el archivo
+    @rtype: DEvuelve el archivo firmado
+    """
     usuario = json.loads(query.usuario)
     certificado = request.data['certificado']
     pdf = request.data['pdf']
@@ -215,7 +239,7 @@ def firmar(request, query):
         certificado.read(), contrasenia.encode("ascii"), backends.default_backend()
     )
 
-    #datau = open(fname, "rb").read()
+    # datau = open(fname, "rb").read()
     datau = pdf.read()
     datas = cms.sign(datau, dct, p12[0], p12[1], p12[2], "sha256")
     return datau, datas
@@ -223,6 +247,13 @@ def firmar(request, query):
 
 
 def enviarNegadoPago(email, monto):
+    """
+    Este metodo sirve para enviar el correo de pago negado
+    @type registro: El campo registro recibe la insercion de la fila
+    @type monto: El campo monto recibe el monto
+    @type email: El campo email recibe el email
+    @rtype: Devuelve verdadero o falso del envio de correo
+    """
     subject, from_email, to = 'RAZÓN POR LA QUE SE NIEGA EL PAGO A PROVEEDORES', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = f"""
@@ -263,6 +294,13 @@ def enviarNegadoPago(email, monto):
 
 
 def enviarProcesandoPago(email, monto):
+    """
+    Este metodo sirve para enviar el correo de pago negado
+    @type registro: El campo registro recibe la insercion de la fila
+    @type monto: El campo monto recibe el monto
+    @type email: El campo email recibe el email
+    @rtype: Devuelve verdadero o falso del envio de correo
+    """
     subject, from_email, to = 'Transferencia exitosa', "08d77fe1da-d09822@inbox.mailtrap.io", \
                               email
     txt_content = f"""
@@ -301,6 +339,11 @@ def enviarProcesandoPago(email, monto):
 
 
 def generarPDF(datos):
+    """
+    Este metodo sirve para generar un pdf
+    @type datos: El campo datos no recibe nada
+    @rtype: DEvuelve el documento pdf
+    """
     # save FPDF() class into a
     # variable pdf
     pdf = FPDF()

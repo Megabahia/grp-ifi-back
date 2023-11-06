@@ -22,6 +22,10 @@ logExcepcion = datosTipoLogAux['excepcion']
 
 
 def get_queue_url():
+    """
+    Este metodo sirve para consumir la cola de aws
+    @rtype: No devuelve nada
+    """
     print('cron')
     logModel = {
         'endPoint': logApi + 'listOne/',

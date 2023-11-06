@@ -1,7 +1,9 @@
 from djongo import models
 import jsonfield
 
-# Create your models here.
+# Nube: ifi
+# PORTALES: CENTER, PERSONAS, CORP, IFIS
+# La clase sirve para relacionarse con la tabla de pagos de la base datos corp
 class Pagos(models.Model):
     _id = models.ObjectIdField()
     codigoCobro = models.CharField(max_length=200,null=True,blank=True)

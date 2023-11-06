@@ -5,6 +5,8 @@ from .models import (
 )
 
 class PagoProveedorSerializer(serializers.ModelSerializer):
+    # La clase meta se relaciona con la tabla PagoProveedores
+    # el campo fields indica los campos que se devolveran
     class Meta:
         model = PagoProveedores
         fields = '__all__'

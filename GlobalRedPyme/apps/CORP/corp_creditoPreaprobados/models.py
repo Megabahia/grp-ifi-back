@@ -1,7 +1,9 @@
 from djongo import models
-from apps.CORP.corp_empresas.models import Empresas
+from ...CORP.corp_empresas.models import Empresas
 
-# Create your models here.
+# Mundo: coop
+# Portales: PERSONAS, corp
+# Esta clase sirve para conectar con la tabla CreditoPreaprobados de la base datos corp
 class CreditoPreaprobados(models.Model):
     _id = models.ObjectIdField()
     fechaAprobado = models.DateField(null=True, blank=True)

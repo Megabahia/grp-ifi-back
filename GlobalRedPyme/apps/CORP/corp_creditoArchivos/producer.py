@@ -5,6 +5,11 @@ from ...config import config
 
 
 def publish(data):
+    """
+    Este metodo sirve para publicar en la cola de aws
+    @type data: El campo recibe la data que se desea publicar
+    @rtype: no devuelve nada
+    """
     topicArn = config.AWS_TOPIC_ARN_CODIGOS
     snsClient = boto3.client(
         'sns',
