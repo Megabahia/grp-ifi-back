@@ -4,6 +4,7 @@ import json
 from .s3 import replicate
 # Importar configuraciones
 from ...config import config
+from urllib.parse import unquote
 import environ
 
 
@@ -20,30 +21,38 @@ def publish(data):
         aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY_COLAS,
         region_name=config.AWS_REGION_NAME,
     )
-
+    env = environ.Env()
+    environ.Env.read_env()  # LEE ARCHIVO .ENV
     campos_a_eliminar = [
-        'reporteBuro', 'identificacion', 'papeletaVotacion', 'identificacionConyuge',
-        'papeletaVotacionConyuge', 'planillaLuzNegocio', 'planillaLuzDomicilio', 'facturas',
-        'matriculaVehiculo', 'impuestoPredial', 'buroCredito', 'evaluacionCrediticia',
-        'ruc', 'rolesPago', 'panillaIESS', 'mecanizadoIess', 'fotoCarnet',
-        'solicitudCredito', 'buroCreditoIfis', 'documentoAprobacion', 'pagare',
-        'contratosCuenta', 'tablaAmortizacion'
+        'pagare', 'contratosCuenta', 'tablaAmortizacion',
+        'reporteBuro', 'identificacion', 'identificacionConyuge',
+        'papeletaVotacionConyuge', 'ruc', 'rolesPago', 'panillaIESS',
+        'documentoAprobacion', 'papeletaVotacion', 'planillaLuzDomicilio',
+        'planillaLuzNegocio', 'matriculaVehiculo', 'impuestoPredial',
+        'buroCredito', 'mecanizadoIess', 'fotoCarnet',
+        'facturasVentas2meses', 'facturasVentas2meses2', 'facturasVentas2meses3',
+        'facturasVentasCertificado', 'facturasCompras2meses',
+        'facturasCompras2meses2', 'nombramientoRepresentante',
+        'certificadoSuperintendencia', 'certificadoPatronales', 'nominaSocios',
+        'actaJuntaGeneral', 'certificadoBancario', 'referenciasComerciales',
+        'balancePerdidasGanancias', 'balanceResultados', 'declaracionIva',
+        'estadoCuentaTarjeta', 'facturasPendiente', 'imagen', 'imagenComercial',
+        'autorizacion', 'cedulaGarante', 'papeletaVotacionGarante', 'fotoGarante',
+        'impuestoPredialGarante', 'matriculaVehiculoGarante',
+        'planillaDomicilioGarante', 'solicitudCredito', 'buroCreditoIfis',
     ]
 
     for campo in campos_a_eliminar:
         if campo in data:
-            data.pop(campo)
+            valor = data.pop(campo)
+            valor = unquote(str(valor).replace(env.str('URL_BUCKET'), ''))
+            print(campo, valor)
+            if valor != 'None':
+                data[campo] = valor
+                replicate(valor)
     if 'external_id' in data:
         if data['external_id'] is None:
             data['external_id'] = data['_id']
-    if 'autorizacion' in data:
-        autorizacion = data.pop('autorizacion')
-        env = environ.Env()
-        environ.Env.read_env()  # LEE ARCHIVO .ENV
-        autorizacion = str(autorizacion).replace(env.str('URL_BUCKET'), '')
-        if autorizacion != 'None':
-            data['autorizacion'] = autorizacion
-            replicate(autorizacion)
 
     response = snsClient.publish(
         TopicArn=topicArn,

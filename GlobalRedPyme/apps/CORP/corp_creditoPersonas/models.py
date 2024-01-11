@@ -1,5 +1,6 @@
 import jsonfield
 from djongo import models
+import json
 
 
 def upload_path(instance, filname):
@@ -9,8 +10,18 @@ def upload_path(instance, filname):
     @type instance: el campo instance es el registro que se esta guardando
     @rtype: Devuelve la ruta del archivo donde se guardo
     """
-    return '/'.join(
-        ['CORP/documentosCreditosPersonas/' + str(instance.numeroIdentificacion), str(instance._id) + "_" + filname])
+    if str(instance.numeroIdentificacion) != 'None':
+        return '/'.join(
+            ['CORP/documentosCreditosPersonas/' + str(instance.numeroIdentificacion), str(instance._id) + "_" + filname])
+    else:
+        if isinstance(instance.empresaInfo, dict):
+            return '/'.join(
+                ['CORP/documentosCreditosPersonas/' + str(instance.empresaInfo['rucEmpresa']), str(instance._id) + "_" + filname])
+        else:
+            return '/'.join(
+                ['CORP/documentosCreditosPersonas/' + str(json.loads(instance.empresaInfo)['rucEmpresa']),
+                 str(instance._id) + "_" + filname])
+
 
 
 # Mundo: coop
